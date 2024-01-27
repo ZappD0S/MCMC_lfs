@@ -47,7 +47,9 @@ MEX_LIBS := $(MEX_OBJS:.cpp.o=.mexw64)
 
 $(MEX_LIBS) : %.mexw64: %.cpp.o hmclib
 	mkdir -p $(dir $@)
-	$(CXX) $< -o $@ -shared -L"/c/Program Files/MATLAB/R2023b/extern/lib/win64/mingw64" -L$(BUILD_DIR) -lhmclib -lmex -lMatlabEngine -lMatlabDataArray
+	$(CXX) $< -o $@ -shared \
+		-L"/c/Program Files/MATLAB/R2023b/extern/lib/win64/mingw64" -L$(BUILD_DIR) -Wl,-rpath $(BUILD_DIR) \
+		 -lhmclib -lmex -lMatlabEngine -lMatlabDataArray
 
 
 $(MEX_OBJS) : $(BUILD_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp
