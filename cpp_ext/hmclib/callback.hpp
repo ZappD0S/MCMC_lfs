@@ -43,7 +43,7 @@ private:
 public:
     const std::vector<std::vector<double>> &get_data() { return *m_samples; }
 
-    DeltaECallback(int max_shift)
+    explicit DeltaECallback(int max_shift)
         : m_samples(std::make_unique<std::vector<std::vector<double>>>(max_shift)),
           m_max_shift(max_shift)
     {

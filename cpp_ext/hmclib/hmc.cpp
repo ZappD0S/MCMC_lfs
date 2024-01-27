@@ -1,7 +1,6 @@
 #include "hmc.hpp"
 #include <algorithm>
 #include <execution>
-#include <stdexcept>
 
 bool allclose(
     const std::vector<double> &a,
@@ -45,7 +44,7 @@ std::tuple<bool, HMC::PhaseSpaceCoords> HMC::leapfrog_rev_check(const HMC::Phase
     return std::make_tuple(success, std::move(forward));
 }
 
-HMC::PhaseSpaceCoords HMC::leapfrog(const HMC::PhaseSpaceCoords &ps_coords, bool backward /*= false */) const
+HMC::PhaseSpaceCoords HMC::leapfrog(const HMC::PhaseSpaceCoords &ps_coords, bool backward) const
 {
     // copy the input into new vectors
     auto Phi_ptr = std::make_unique<std::vector<double>>(*ps_coords.Phi);

@@ -1,6 +1,5 @@
 #include <vector>
 #include <cmath>
-#include <functional>
 #include <execution>
 #include "system.hpp"
 
