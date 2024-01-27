@@ -1,0 +1,555 @@
+load HO
+whos
+  Name                  Size                   Bytes  Class     Attributes
+
+  E0                    1x7                       56  double              
+  L50a01          1000000x500             4000000000  double              
+  L50a0125        1000000x400             3200000000  double              
+  L50a025         1000000x200             1600000000  double              
+  L50a04          1000000x125             1000000000  double              
+  L50a05          1000000x100              800000000  double              
+  L50a0625        1000000x80               640000000  double              
+  L50a1           1000000x50               400000000  double              
+  R100a04         1000000x250             2000000000  double              
+  a                     1x7                       56  double              
+  aa                    1x7                       56  double              
+  acc01                 1x1                        8  double              
+  acc0125               1x1                        8  double              
+  acc025                1x1                        8  double              
+  acc04                 1x1                        8  double              
+  acc05                 1x1                        8  double              
+  acc0625               1x1                        8  double              
+  acc1                  1x1                        8  double              
+  acc100_04             1x1                        8  double              
+  ans                   1x1                        8  double              
+  ccT100_a04            1x16                     128  double              
+  ccX2a01               1x5001                 40008  double              
+  ccX2a0125             1x2001                 16008  double              
+  ccX2a025              1x2001                 16008  double              
+  ccX2a04               1x2001                 16008  double              
+  ccX2a05               1x2001                 16008  double              
+  ccX2a0625             1x2001                 16008  double              
+  ccX2a1                1x2001                 16008  double              
+  cca04                 1x16                     128  double              
+  cca05                 1x16                     128  double              
+  cca0625               1x16                     128  double              
+  cca1                  1x16                     128  double              
+  dE0                   1x7                       56  double              
+  ee                    1x7                       56  double              
+
+
+
+a
+a =
+    0.1000    0.1250    0.2500    0.4000    0.5000    0.6250    1.0000
+
+
+
+size(mean(L50a1.^2,2))
+ans =
+     1000000           1
+size(mean(L50a1.^2))
+ans =
+     1    50
+edit MYautocorr.m
+ccX2a1=MYautocorr(mean(L50a1.^2,2)*(1^2),2000);
+plot(0:10,ccX2a1(1:11))
+plot(0:10,ccX2a1(1:11),'.')
+plot(0:10,ccX2a1(1:11),'dk')
+grid
+plot(cumsum(ccX2a1(1:30)))
+plot(0:30,ccX2a0625(1:31))
+hold
+Current plot held
+plot(0:30,ccX2a1(1:31))
+plot(0:30,ccX2a5(1:31))
+{Undefined function or variable 'ccX2a5'.} 
+plot(0:30,ccX2a05(1:31))
+plot(0:80,ccX2a04(1:81))
+grid
+plot(0:200,ccX2a025(1:201))
+plot(0:500,ccX2a025(1:501))
+plot(0:2000,ccX2a0125(1:2001))
+whos
+  Name                  Size                   Bytes  Class     Attributes
+
+  E0                    1x7                       56  double              
+  L50a01          1000000x500             4000000000  double              
+  L50a0125        1000000x400             3200000000  double              
+  L50a025         1000000x200             1600000000  double              
+  L50a04          1000000x125             1000000000  double              
+  L50a05          1000000x100              800000000  double              
+  L50a0625        1000000x80               640000000  double              
+  L50a1           1000000x50               400000000  double              
+  R100a04         1000000x250             2000000000  double              
+  a                     1x7                       56  double              
+  aa                    1x7                       56  double              
+  acc01                 1x1                        8  double              
+  acc0125               1x1                        8  double              
+  acc025                1x1                        8  double              
+  acc04                 1x1                        8  double              
+  acc05                 1x1                        8  double              
+  acc0625               1x1                        8  double              
+  acc1                  1x1                        8  double              
+  acc100_04             1x1                        8  double              
+  ans                   1x2                       16  double              
+  ccT100_a04            1x16                     128  double              
+  ccX2a01               1x5001                 40008  double              
+  ccX2a0125             1x2001                 16008  double              
+  ccX2a025              1x2001                 16008  double              
+  ccX2a04               1x2001                 16008  double              
+  ccX2a05               1x2001                 16008  double              
+  ccX2a0625             1x2001                 16008  double              
+  ccX2a1                1x2001                 16008  double              
+  cca04                 1x16                     128  double              
+  cca05                 1x16                     128  double              
+  cca0625               1x16                     128  double              
+  cca1                  1x16                     128  double              
+  dE0                   1x7                       56  double              
+  ee                    1x7                       56  double              
+
+plot(0:5000,ccX2a01(1:5001))
+hold
+Current plot released
+plot(cumsum(ccX2a1(1:30)))
+plot(cumsum(ccX2a04(1:30)))
+plot(cumsum(ccX2a04(1:60)))
+plot(cumsum(ccX2a04(1:100)))
+plot(cumsum(ccX2a04(1:150)))
+E0
+E0 =
+    0.5006    0.5024    0.4954    0.4898    0.4848    0.4770    0.4473
+a
+a =
+    0.1000    0.1250    0.2500    0.4000    0.5000    0.6250    1.0000
+dE0
+dE0 =
+   1.0e-03 *
+    0.8430    0.3475    0.0444    0.0117    0.0068    0.0033    0.0008
+mean(mean(L50a04.^2,2)*(0.4^2))
+ans =
+    0.4898
+std(mean(L50a04.^2,2)*(0.4^2))
+ans =
+    0.1004
+std(mean(L50a04.^2,2)*(0.4^2))/sqrt(1e6/22.5)
+ans =
+   4.7627e-04
+std(mean(L50a04.^2)*(0.4^2))/sqrt(1e6/22)
+ans =
+   1.1694e-05
+errorbar(a,E0,dE0)
+errorbar(a,E0,dE0,'.')
+axis
+ans =
+    0.1000    0.1295    0.4998    0.5033
+ans(1) = 0
+ans =
+         0    0.1295    0.4998    0.5033
+axis(ans)
+grid
+errorbar(a(3:end),E0(3:end),dE0(3:end),'.')
+axis
+ans =
+    0.2000    1.0000    0.4400    0.5000
+ax + ans
+{Undefined function or variable 'ax'.} 
+ax = ans
+ax =
+    0.2000    1.0000    0.4400    0.5000
+ax(1) = 0
+ax =
+         0    1.0000    0.4400    0.5000
+ax(2) = 1.05
+ax =
+         0    1.0500    0.4400    0.5000
+axis(ax)
+errorbar(a(3:end).^2,E0(3:end),dE0(3:end),'.')
+polyfit(a(3:end).^2,E0(3:end),1)
+ans =
+   -0.0509    0.4978
+polyfit(a(3:end-1).^2,E0(3:end-1),1)
+ans =
+   -0.0560    0.4988
+polyfit(a(3:end).^2,E0(3:end),2)
+ans =
+    0.0076   -0.0594    0.4991
+hold
+Current plot held
+close all
+subplot(311)
+errorbar(a(3:end).^2,E0(3:end),dE0(3:end),'.')
+errorbar(a(3:end).^2,E0(3:end),dE0(3:end),'d')
+polyfit(a(3:end).^2,E0(3:end),1)
+ans =
+   -0.0509    0.4978
+hold on
+plot(0:0.1:1,polyval(ans,0:0.1:1),'r')
+subplot(312)
+errorbar(a(3:end).^2,E0(3:end),dE0(3:end),'d')
+hold on
+polyfit(a(3:end-1).^2,E0(3:end-1),1)
+ans =
+   -0.0560    0.4988
+plot(0:0.1:1,polyval(ans,0:0.1:1),'r')
+subplot(313)
+polyfit(a(3:end).^2,E0(3:end),2)
+ans =
+    0.0076   -0.0594    0.4991
+errorbar(a(3:end).^2,E0(3:end),dE0(3:end),'d')
+hold on
+plot(0:0.1:1,polyval(ans,0:0.1:1),'r')
+edit tau_estrap.m
+tau_estrap(a(3:7).^2,E0(3:7),dE0(3:7),2)
+ans =
+    0.4991    0.0000
+ans(2)
+ans =
+   4.4022e-05
+tau_estrap(a(3:7).^2,E0(3:7),dE0(3:7),2)
+ans =
+    0.4991    0.0000
+errorbar(0,ans(1),ans(2),'.k')
+axis
+ans =
+         0    0.0001    0.4984    0.4996
+ans(1)=-0.02
+ans =
+   -0.0200    0.0001    0.4984    0.4996
+axis(ans)
+axis
+ans =
+         0    0.0001    0.4984    0.4995
+ans(1)=-0.002
+ans =
+   -0.0020    0.0001    0.4984    0.4995
+axis(ans)
+format long
+tau_estrap(a(3:7).^2,E0(3:7),dE0(3:7),2)
+ans =
+   0.499104649994973   0.000045152936325
+close all
+errorbar(a.^2,E0,dE0,'d')
+close all
+
+
+
+whos
+  Name                  Size                   Bytes  Class     Attributes
+
+  E0                    1x7                       56  double              
+  L50a01          1000000x500             4000000000  double              
+  L50a0125        1000000x400             3200000000  double              
+  L50a025         1000000x200             1600000000  double              
+  L50a04          1000000x125             1000000000  double              
+  L50a05          1000000x100              800000000  double              
+  L50a0625        1000000x80               640000000  double              
+  L50a1           1000000x50               400000000  double              
+  R100a04         1000000x250             2000000000  double              
+  a                     1x7                       56  double              
+  aa                    1x7                       56  double              
+  acc01                 1x1                        8  double              
+  acc0125               1x1                        8  double              
+  acc025                1x1                        8  double              
+  acc04                 1x1                        8  double              
+  acc05                 1x1                        8  double              
+  acc0625               1x1                        8  double              
+  acc1                  1x1                        8  double              
+  acc100_04             1x1                        8  double              
+  ans                   1x2                       16  double              
+  ax                    1x4                       32  double              
+  ccT100_a04            1x16                     128  double              
+  ccX2a01               1x5001                 40008  double              
+  ccX2a0125             1x2001                 16008  double              
+  ccX2a025              1x2001                 16008  double              
+  ccX2a04               1x2001                 16008  double              
+  ccX2a05               1x2001                 16008  double              
+  ccX2a0625             1x2001                 16008  double              
+  ccX2a1                1x2001                 16008  double              
+  cca04                 1x16                     128  double              
+  cca05                 1x16                     128  double              
+  cca0625               1x16                     128  double              
+  cca1                  1x16                     128  double              
+  dE0                   1x7                       56  double              
+  ee                    1x7                       56  double              
+
+
+
+E0
+E0 =
+  Columns 1 through 6
+   0.500581409166729   0.502411659146126   0.495386488908661   0.489811470912902   0.484781153166053   0.476998145990063
+  Column 7
+   0.447259254399647
+format short
+E0
+E0 =
+    0.5006    0.5024    0.4954    0.4898    0.4848    0.4770    0.4473
+a
+a =
+    0.1000    0.1250    0.2500    0.4000    0.5000    0.6250    1.0000
+mean(mean(R100a04.^2,2)*(0.4^2))
+ans =
+    0.4896
+xx = -4:0.125:4
+xx =
+  Columns 1 through 12
+   -4.0000   -3.8750   -3.7500   -3.6250   -3.5000   -3.3750   -3.2500   -3.1250   -3.0000   -2.8750   -2.7500   -2.6250
+  Columns 13 through 24
+   -2.5000   -2.3750   -2.2500   -2.1250   -2.0000   -1.8750   -1.7500   -1.6250   -1.5000   -1.3750   -1.2500   -1.1250
+  Columns 25 through 36
+   -1.0000   -0.8750   -0.7500   -0.6250   -0.5000   -0.3750   -0.2500   -0.1250         0    0.1250    0.2500    0.3750
+  Columns 37 through 48
+    0.5000    0.6250    0.7500    0.8750    1.0000    1.1250    1.2500    1.3750    1.5000    1.6250    1.7500    1.8750
+  Columns 49 through 60
+    2.0000    2.1250    2.2500    2.3750    2.5000    2.6250    2.7500    2.8750    3.0000    3.1250    3.2500    3.3750
+  Columns 61 through 65
+    3.5000    3.6250    3.7500    3.8750    4.0000
+nn50_04 = hist(L50a04(1:end)*0.4,xx)
+nn50_04 =
+  Columns 1 through 10
+           2           2           4          12          40          68         183         428         933        1995
+  Columns 11 through 20
+        4011        8124       15419       28678       51808       90410      152003      248137      394619      604516
+  Columns 21 through 30
+      900488     1296905     1815695     2453195     3214337     4079510     5016386     5979871     6892063     7706391
+  Columns 31 through 40
+     8347726     8752009     8892472     8753783     8345097     7706986     6896132     5977834     5018759     4081925
+  Columns 41 through 50
+     3213528     2454141     1813240     1297300      899133      604272      392701      247693      150356       89561
+  Columns 51 through 60
+       50854       28061       14904        7924        3905        1902         865         384         177          77
+  Columns 61 through 65
+          35          17          10           4           0
+bar(xx,nn50_04/length(L50a04(1:end)))
+nn100_04 = hist(R100a04(1:end)*0.4,xx)
+nn100_04 =
+  Columns 1 through 10
+           4           5           9          37          81         156         418         896        2065        4116
+  Columns 11 through 20
+        8243       16071       30989       57577      103437      180737      303864      498079      788415     1211138
+  Columns 21 through 30
+     1804768     2597711     3627195     4907674     6432296     8165233    10047390    11966709    13799053    15428849
+  Columns 31 through 40
+    16712044    17515942    17802011    17510484    16695684    15424834    13784194    11937147    10012436     8143388
+  Columns 41 through 50
+     6407037     4892484     3611776     2585203     1797294     1205652      783042      494264      301238      178012
+  Columns 51 through 60
+      102825       57134       30674       16158        8251        4032        1937         916         386         192
+  Columns 61 through 65
+          62          28          19           4           1
+subplot(121)
+bar(xx,nn50_04/length(L50a04(1:end)))
+subplot(122)
+bar(xx,nn100_04/length(R100a04(1:end)))
+close all
+
+
+whos
+  Name                  Size                   Bytes  Class     Attributes
+
+  E0                    1x7                       56  double              
+  L50a01          1000000x500             4000000000  double              
+  L50a0125        1000000x400             3200000000  double              
+  L50a025         1000000x200             1600000000  double              
+  L50a04          1000000x125             1000000000  double              
+  L50a05          1000000x100              800000000  double              
+  L50a0625        1000000x80               640000000  double              
+  L50a1           1000000x50               400000000  double              
+  R100a04         1000000x250             2000000000  double              
+  a                     1x7                       56  double              
+  aa                    1x7                       56  double              
+  acc01                 1x1                        8  double              
+  acc0125               1x1                        8  double              
+  acc025                1x1                        8  double              
+  acc04                 1x1                        8  double              
+  acc05                 1x1                        8  double              
+  acc0625               1x1                        8  double              
+  acc1                  1x1                        8  double              
+  acc100_04             1x1                        8  double              
+  ans                   1x1                        8  double              
+  ax                    1x4                       32  double              
+  ccT100_a04            1x16                     128  double              
+  ccX2a01               1x5001                 40008  double              
+  ccX2a0125             1x2001                 16008  double              
+  ccX2a025              1x2001                 16008  double              
+  ccX2a04               1x2001                 16008  double              
+  ccX2a05               1x2001                 16008  double              
+  ccX2a0625             1x2001                 16008  double              
+  ccX2a1                1x2001                 16008  double              
+  cca04                 1x16                     128  double              
+  cca05                 1x16                     128  double              
+  cca0625               1x16                     128  double              
+  cca1                  1x16                     128  double              
+  dE0                   1x7                       56  double              
+  ee                    1x7                       56  double              
+  nn100_04              1x65                     520  double              
+  nn50_04               1x65                     520  double              
+  xx                    1x65                     520  double              
+
+
+
+cca1
+cca1 =
+  Columns 1 through 12
+    0.4473    0.1709    0.0653    0.0249    0.0096    0.0036    0.0014    0.0006    0.0003    0.0002    0.0001    0.0001
+  Columns 13 through 16
+    0.0000   -0.0000    0.0000    0.0001
+mean(mean(L50a1.*L50a1,2))
+ans =
+    0.4473
+LL = [L50a1(:,2:end) L50a1(:,1)];
+
+
+
+
+plot(0:15,cca1,'o')
+semilogy(0:15,cca1,'o')
+[Warning: Negative data ignored] 
+plot(0:15,cca1,'o')
+semilogy(0:15,cca1,'o')
+[Warning: Negative data ignored] 
+polyfit(0:5,log(cca1(1:6)),1)
+ans =
+   -0.9630   -0.8031
+hold
+Current plot held
+semilogy(0:0.1:7,exp(polyval(ans,0:0.1:7)))
+hold
+Current plot released
+semilogy(0:15,cca0625,'o')
+hold
+Current plot held
+polyfit(0:5,log(cca0625(1:6)),1)
+ans =
+   -0.6156    0.1996
+ans(1)/0.625
+ans =
+   -0.9849
+polyfit(0:5,log(cca0625(1:6)),1)
+ans =
+   -0.6156    0.1996
+semilogy(0:0.1:7,exp(polyval(ans,0:0.1:7)))
+hold
+Current plot released
+semilogy(0:15,cca05,'o')
+hold
+Current plot held
+polyfit(0:5,log(cca05(1:6)),1)
+ans =
+   -0.4960    0.6628
+semilogy(0:0.1:7,exp(polyval(ans,0:0.1:7)))
+ans(1)/0.5
+ans =
+   -0.9921
+whos
+  Name                  Size                   Bytes  Class     Attributes
+
+  E0                    1x7                       56  double              
+  L50a01          1000000x500             4000000000  double              
+  L50a0125        1000000x400             3200000000  double              
+  L50a025         1000000x200             1600000000  double              
+  L50a04          1000000x125             1000000000  double              
+  L50a05          1000000x100              800000000  double              
+  L50a0625        1000000x80               640000000  double              
+  L50a1           1000000x50               400000000  double              
+  LL              1000000x50               400000000  double              
+  R100a04         1000000x250             2000000000  double              
+  a                     1x7                       56  double              
+  aa                    1x7                       56  double              
+  acc01                 1x1                        8  double              
+  acc0125               1x1                        8  double              
+  acc025                1x1                        8  double              
+  acc04                 1x1                        8  double              
+  acc05                 1x1                        8  double              
+  acc0625               1x1                        8  double              
+  acc1                  1x1                        8  double              
+  acc100_04             1x1                        8  double              
+  ans                   1x1                        8  double              
+  ax                    1x4                       32  double              
+  ccT100_a04            1x16                     128  double              
+  ccX2a01               1x5001                 40008  double              
+  ccX2a0125             1x2001                 16008  double              
+  ccX2a025              1x2001                 16008  double              
+  ccX2a04               1x2001                 16008  double              
+  ccX2a05               1x2001                 16008  double              
+  ccX2a0625             1x2001                 16008  double              
+  ccX2a1                1x2001                 16008  double              
+  cca04                 1x16                     128  double              
+  cca05                 1x16                     128  double              
+  cca0625               1x16                     128  double              
+  cca1                  1x16                     128  double              
+  dE0                   1x7                       56  double              
+  ee                    1x7                       56  double              
+  nn100_04              1x65                     520  double              
+  nn50_04               1x65                     520  double              
+  xx                    1x65                     520  double              
+
+hold
+Current plot released
+semilogy(0:15,cca04,'o')
+hold
+Current plot held
+semilogy(0:15,ccT100_a04,'*')
+hold
+Current plot released
+plot(0:15,ccT100_a04,'o')
+whos
+  Name                  Size                   Bytes  Class     Attributes
+
+  E0                    1x7                       56  double              
+  L50a01          1000000x500             4000000000  double              
+  L50a0125        1000000x400             3200000000  double              
+  L50a025         1000000x200             1600000000  double              
+  L50a04          1000000x125             1000000000  double              
+  L50a05          1000000x100              800000000  double              
+  L50a0625        1000000x80               640000000  double              
+  L50a1           1000000x50               400000000  double              
+  LL              1000000x50               400000000  double              
+  R100a04         1000000x250             2000000000  double              
+  a                     1x7                       56  double              
+  aa                    1x7                       56  double              
+  acc01                 1x1                        8  double              
+  acc0125               1x1                        8  double              
+  acc025                1x1                        8  double              
+  acc04                 1x1                        8  double              
+  acc05                 1x1                        8  double              
+  acc0625               1x1                        8  double              
+  acc1                  1x1                        8  double              
+  acc100_04             1x1                        8  double              
+  ans                   1x1                        8  double              
+  ax                    1x4                       32  double              
+  ccT100_a04            1x16                     128  double              
+  ccX2a01               1x5001                 40008  double              
+  ccX2a0125             1x2001                 16008  double              
+  ccX2a025              1x2001                 16008  double              
+  ccX2a04               1x2001                 16008  double              
+  ccX2a05               1x2001                 16008  double              
+  ccX2a0625             1x2001                 16008  double              
+  ccX2a1                1x2001                 16008  double              
+  cca04                 1x16                     128  double              
+  cca05                 1x16                     128  double              
+  cca0625               1x16                     128  double              
+  cca1                  1x16                     128  double              
+  dE0                   1x7                       56  double              
+  ee                    1x7                       56  double              
+  nn100_04              1x65                     520  double              
+  nn50_04               1x65                     520  double              
+  xx                    1x65                     520  double              
+
+hold
+Current plot held
+plot(0:15,cca1,'d')
+hold
+Current plot released
+plot(0:15,ccT100_a04,'o')
+hold
+Current plot held
+plot(0:15,cca4,'d')
+{Undefined function or variable 'cca4'.} 
+plot(0:15,cca04,'d')
+bar(xx,nn100_04/length(R100a04(1:end)))
+hold
+Current plot released
+bar(xx,nn100_04/length(R100a04(1:end)))
+diary off
