@@ -1,6 +1,6 @@
+#include "hmc.hpp"
 #include "mex.hpp"
 #include "mexAdapter.hpp"
-#include "hmc.hpp"
 
 class MexFunction : public matlab::mex::Function
 {
@@ -13,7 +13,7 @@ class MexFunction : public matlab::mex::Function
                          std::vector<matlab::data::Array>({factory.createScalar(str + "\n")}));
     }
 
-public:
+  public:
     void operator()(matlab::mex::ArgumentList outputs, matlab::mex::ArgumentList inputs)
     {
         // TODO: checkArguments(outputs, inputs);
@@ -41,7 +41,6 @@ public:
         displayOnMATLAB(std::to_string(N_sample));
         displayOnMATLAB(std::to_string(NHmc));
         displayOnMATLAB(std::to_string(seed));
-
 
         auto sys = std::make_unique<QhoSystem>(N, m0, omg0);
         HMC hmc(std::move(sys), NHmc, epsilon, seed);

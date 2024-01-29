@@ -3,6 +3,8 @@
 
 int main()
 {
+    std::cout << "start" << std::endl;
+
     auto sys = std::make_unique<QhoSystem>(100, 1.0, 1.0);
     HMC hmc(std::move(sys), 100, 0.1, 1234);
 
@@ -16,6 +18,7 @@ int main()
 
     if (hmc.run(Phi0, 1e5, callbacks) != 0)
     {
+        std::cout << "error!" << std::endl;
         return -1;
     }
 
@@ -29,13 +32,14 @@ int main()
 
     if (hmc.run(Phi0, 1e6, callbacks) != 0)
     {
+        std::cout << "error!" << std::endl;
         return -1;
     }
 
     const auto &arr = e0_callback->get_data();
 
     // std::cout << std::to_string(arr[0]) << std::endl;
-    // std::cout << "1234" << std::endl;
+    std::cout << "1234" << std::endl;
 
     return 0;
 }

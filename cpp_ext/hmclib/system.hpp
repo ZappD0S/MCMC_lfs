@@ -1,16 +1,15 @@
 #pragma once
-#include <vector>
-#include <memory>
 #include "cppshrhelp.hpp"
+#include <vector>
 
 class DLL_EXPORT HMCSystem
 {
-public:
-    virtual double S(const std::vector<double> &Phi) const = 0;
+  public:
+    virtual double S(const std::vector<double> &Phi) = 0;
 
     virtual int size() const = 0;
 
-    virtual std::vector<double> dSdPhi(const std::vector<double> &Phi) const = 0;
+    virtual const std::vector<double> &dSdPhi(const std::vector<double> &Phi) = 0;
 };
 
 class DLL_EXPORT QhoSystem : public HMCSystem
@@ -18,14 +17,17 @@ class DLL_EXPORT QhoSystem : public HMCSystem
     int m_N;
     double m_m0;
     double m_omg0;
-    std::unique_ptr<std::vector<std::size_t>> m_idx;
+    std::vector<std::size_t> m_idx;
+    std::vector<double> m_Phi_m;
+    std::vector<double> m_Phi_p;
+    std::vector<double> m_dS;
 
-public:
+  public:
     QhoSystem(int N, double m0, double omg0);
 
     int size() const { return m_N; }
 
-    double S(const std::vector<double> &Phi) const;
+    double S(const std::vector<double> &Phi);
 
-    std::vector<double> dSdPhi(const std::vector<double> &Phi) const;
+    const std::vector<double> &dSdPhi(const std::vector<double> &Phi);
 };
