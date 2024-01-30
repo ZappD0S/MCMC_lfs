@@ -40,7 +40,6 @@ class DLL_EXPORT DeltaECallback : public HMCCallback
   private:
     std::vector<std::vector<double>> m_samples;
     int m_max_shift;
-    std::vector<double> m_Phi_shift;
 
   public:
     const std::vector<std::vector<double>> &get_data() { return m_samples; }
@@ -49,9 +48,9 @@ class DLL_EXPORT DeltaECallback : public HMCCallback
         : m_samples(std::vector<std::vector<double>>(max_shift)),
           m_max_shift(max_shift)
     {
-        for (int i = 0; i < max_shift; i++)
+        for (int k = 0; k < max_shift; k++)
         {
-            m_samples[i].reserve(reserve_size);
+            m_samples[k].reserve(reserve_size);
         }
     }
 

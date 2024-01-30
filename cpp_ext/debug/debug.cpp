@@ -39,7 +39,7 @@ int main()
     const auto &arr = e0_callback->get_data();
 
     // std::cout << std::to_string(arr[0]) << std::endl;
-    std::cout << "1234" << std::endl;
+    std::cout << "end" << std::endl;
 
     return 0;
 }

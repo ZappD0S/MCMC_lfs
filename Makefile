@@ -2,9 +2,11 @@
 
 CXX = g++
 
+# -D_GLIBCXX_DEBUG
+
 # The -MMD and -MP flags together generate Makefiles for us!
 # These files will have .d instead of .o as the output.
-CXXFLAGS = -Ofast -march=native -std=c++17 -Wall -Wextra -Wpedantic -Werror -MMD -MP
+CXXFLAGS = -O3 -march=native -std=c++17 -Wall -Wextra -Wpedantic -Werror -MMD -MP
 # CXXFLAGS = -g -Og -std=c++20 -Wall -Wextra -Wpedantic -Werror  -MMD -MP
 
 BUILD_DIR := ./build
@@ -27,15 +29,15 @@ HMCLIB_OBJS := $(HMCLIB_SRCS:$(SRC_DIR)/%=$(BUILD_DIR)/%.o)
 # As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
 HMCLIB_DEPS := $(HMCLIB_OBJS:.o=.d)
 
-$(BUILD_DIR)/hmclib.dll: $(HMCLIB_OBJS)
+$(BUILD_DIR)/libhmclib.dll: $(HMCLIB_OBJS)
 	mkdir -p $(dir $@)
-	$(CXX) $(HMCLIB_OBJS) -o $@ -shared -Wl,--out-implib,$(@:.dll=.lib) -ltbb12
+	$(CXX) $(HMCLIB_OBJS) -o $@ -shared -flto -fPIC -Wl,--out-implib,$(@:.dll=.lib)
 $(HMCLIB_OBJS) : $(BUILD_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(INC_FLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(INC_FLAGS) $(CXXFLAGS) -fPIC -c $< -o $@
 
 .PHONY: hmclib
-hmclib: $(BUILD_DIR)/hmclib.dll
+hmclib: $(BUILD_DIR)/libhmclib.dll
 
 
 MEX_SRCS := $(shell find $(SRC_DIR)/mex_funcs -maxdepth 1 -name '*.cpp')

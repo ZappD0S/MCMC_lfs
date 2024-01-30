@@ -1,5 +1,5 @@
 #include "leapfrog.hpp"
-#include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstddef>
 
@@ -9,14 +9,25 @@ bool allclose(
     double rtol = 1e-5,
     double atol = 1e-8)
 {
-    auto pred = [=](double x, double y) -> bool
+    assert(a.size() == b.size());
+
+    auto pred = [=](auto x, auto y) -> bool
     {
         return (std::abs(x - y) <= (atol + rtol * std::abs(y)) && std::isfinite(y)) || (x == y);
     };
 
-    return std::transform_reduce(
-        a.begin(), a.end(), b.begin(),
-        true, std::logical_and{}, pred);
+    // return std::transform_reduce(
+    //     a.begin(), a.end(), b.begin(),
+    //     true, std::logical_and{}, pred);
+
+    bool res = true;
+
+    for (std::size_t i = 0; i < a.size(); i++)
+    {
+        res &= pred(a[i], b[i]);
+    }
+
+    return res;
 }
 
 bool Leapfrog::step(PhaseSpaceCoords &state)
@@ -33,112 +44,42 @@ bool Leapfrog::step(PhaseSpaceCoords &state)
            allclose(m_state0.Pi, m_state0_rev.Pi);
 }
 
-void LeapfrogSTL::step_impl(PhaseSpaceCoords &state, bool backward) const
+inline void VanillaLeapfrog::update_Phi(std::vector<double> &Phi, const std::vector<double> &Pi, double epsilon) const
 {
-    auto &Phi = state.Phi;
-    auto &Pi = state.Pi;
-
-    auto update_Phi = [&](std::size_t i, double epsilon)
-    {
-        Phi[i] += epsilon * Pi[i];
-    };
-
-    auto update_Pi = [&](std::size_t i, const std::vector<double> &dS, double epsilon)
-    {
-        Pi[i] -= epsilon * dS[i];
-    };
-
-    auto epsilon = m_epsilon;
-    if (backward)
-    {
-        epsilon = -epsilon;
-    }
-
-    const auto &idx = m_idx;
-
-    // first Pi half step
-    {
-        const auto &dS = m_system->dSdPhi(Phi);
-        std::for_each(
-            idx.begin(), idx.end(),
-            [&, epsilon](std::size_t i)
-            { update_Pi(i, dS, 0.5 * epsilon); });
-    }
-
-    for (int step = 0; step < m_Nhmc; step++)
-    {
-        std::for_each(
-            idx.begin(), idx.end(),
-            [&, epsilon](std::size_t i)
-            { update_Phi(i, epsilon); });
-
-        const auto &dS = m_system->dSdPhi(Phi);
-        std::for_each(
-            idx.begin(), idx.end(),
-            [&, epsilon](std::size_t i)
-            { update_Pi(i, dS, epsilon); });
-    }
-
-    std::for_each(
-        idx.begin(), idx.end(),
-        [&, epsilon](std::size_t i)
-        { update_Phi(i, epsilon); });
-
-    // last Pi half step
-    {
-        const auto &dS = m_system->dSdPhi(Phi);
-        std::for_each(
-            idx.begin(), idx.end(),
-            [&, epsilon](std::size_t i)
-            { update_Pi(i, dS, 0.5 * epsilon); });
-    }
-}
-
-inline void LeapfrogVanilla::update_Phi(std::vector<double> &Phi, const std::vector<double> &Pi, double epsilon)
-{
-    for (std::size_t i = 0; i < Phi.size(); i++)
+    for (int i = 0; i < static_cast<int>(Phi.size()); i++)
     {
         Phi[i] += epsilon * Pi[i];
     }
 }
 
-inline void LeapfrogVanilla::update_Pi(std::vector<double> &Pi, const std::vector<double> &dS, double epsilon)
+inline void VanillaLeapfrog::update_Pi(std::vector<double> &Pi, const std::vector<double> &Phi, double epsilon) const
 {
-    for (std::size_t i = 0; i < Pi.size(); i++)
+    const auto &dS = m_system->dSdPhi(Phi);
+
+    for (int i = 0; i < static_cast<int>(Pi.size()); i++)
     {
         Pi[i] -= epsilon * dS[i];
     }
 }
 
-void LeapfrogVanilla::step_impl(PhaseSpaceCoords &state, bool backward) const
+void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward) const
 {
     auto &Phi = state.Phi;
     auto &Pi = state.Pi;
 
-    auto epsilon = m_epsilon;
-    if (backward)
-    {
-        epsilon = -epsilon;
-    }
+    auto sign = backward ? -1 : 1;
+    auto epsilon = sign * m_epsilon;
 
     // first Pi half step
-    {
-        const auto &dS = m_system->dSdPhi(Phi);
-        update_Pi(Pi, dS, 0.5 * epsilon);
-    }
+    update_Pi(Pi, Phi, 0.5 * epsilon);
 
     for (int step = 0; step < m_Nhmc; step++)
     {
         update_Phi(Phi, Pi, epsilon);
-        const auto &dS = m_system->dSdPhi(Phi);
-        update_Pi(Pi, dS, epsilon);
+        update_Pi(Pi, Phi, epsilon);
     }
 
     update_Phi(Phi, Pi, epsilon);
-
     // last Pi half step
-    {
-        const auto &dS = m_system->dSdPhi(Phi);
-        update_Pi(Pi, dS, 0.5 * epsilon);
-    }
+    update_Pi(Pi, Phi, 0.5 * epsilon);
 }

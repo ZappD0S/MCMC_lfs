@@ -1,12 +1,11 @@
 #include "hmc.hpp"
-#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <memory>
 
 HMC::HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed)
     : m_system(system),
-      m_leapfrog(std::make_unique<LeapfrogVanilla>(system, Nhmc, epsilon))
+      m_leapfrog(std::make_unique<VanillaLeapfrog>(system, Nhmc, epsilon))
 {
     std::random_device rd;
     m_rng = std::make_unique<std::mt19937>(rd());
@@ -41,8 +40,10 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
     {
         proposal = cur;
 
-        std::generate(proposal.Pi.begin(), proposal.Pi.end(), [&]()
-                      { return randn(rng); });
+        for (int j = 0; j < m_system->size(); j++)
+        {
+            proposal.Pi[j] = randn(rng);
+        }
 
         auto success = m_leapfrog->step(proposal);
 
@@ -57,7 +58,7 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
 
         if (dH <= 0 || rand(rng) < std::exp(-dH))
         {
-            cur = std::move(proposal);
+            cur = proposal;
         }
 
         for (auto &callback : callbacks)

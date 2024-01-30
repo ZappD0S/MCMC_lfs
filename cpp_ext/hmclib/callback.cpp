@@ -1,7 +1,6 @@
 #include "callback.hpp"
-#include <algorithm>
 #include <cmath>
-#include <numeric>
+#include <cstddef>
 
 void LastPhiCallback::operator()(const std::vector<double> &Phi, bool last)
 {
@@ -13,16 +12,14 @@ void LastPhiCallback::operator()(const std::vector<double> &Phi, bool last)
 
 void E0Callback::operator()(const std::vector<double> &Phi, bool last)
 {
-    auto op = [](double phi)
-    {
-        return std::pow(phi, 2);
-    };
+    double tot = 0.0;
 
-    // TODO: divide by size
-    auto sample = std::transform_reduce(
-        Phi.begin(), Phi.end(),
-        0.0, std::plus{}, op);
-    m_samples.push_back(sample);
+    for (size_t i = 0; i < Phi.size(); i++)
+    {
+        tot += std::pow(Phi[i], 2);
+    }
+
+    m_samples.push_back(tot / Phi.size());
 
     if (last)
     {
@@ -32,19 +29,21 @@ void E0Callback::operator()(const std::vector<double> &Phi, bool last)
 
 void DeltaECallback::operator()(const std::vector<double> &Phi, bool last)
 {
-    // if both vectors are the same size this should't allocate anything
-    m_Phi_shift = Phi;
-
-    // TODO: this loop can be parallelized
     for (int k = 0; k < m_max_shift; k++)
     {
-        // shift by 1 at every iteration
-        std::rotate(m_Phi_shift.begin(), m_Phi_shift.begin() + 1, m_Phi_shift.end());
+        double tot = 0.0;
 
-        // TODO: divide by size
-        m_samples[k].push_back(std::transform_reduce(
-            Phi.begin(), Phi.end(), m_Phi_shift.begin(),
-            0.0, std::plus{}, std::multiplies{}));
+        for (std::size_t i = 0; i < Phi.size() - k; i++)
+        {
+            tot += Phi[i] * Phi[i + k];
+        }
+
+        for (std::size_t i = Phi.size() - k; i < Phi.size(); i++)
+        {
+            tot += Phi[i] * Phi[i - Phi.size() + k];
+        }
+
+        m_samples[k].push_back(tot / Phi.size());
 
         if (last)
         {

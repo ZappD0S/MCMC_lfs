@@ -22,9 +22,9 @@ class DLL_EXPORT QhoSystem : public HMCSystem
   public:
     QhoSystem(int N, double m0, double omg0);
 
-    int size() const { return m_N; }
+    int size() const override { return m_N; }
 
-    double S(const std::vector<double> &Phi);
+    double S(const std::vector<double> &Phi) override;
 
-    const std::vector<double> &dSdPhi(const std::vector<double> &Phi);
+    const std::vector<double> &dSdPhi(const std::vector<double> &Phi) override;
 };

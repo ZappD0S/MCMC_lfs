@@ -7,7 +7,6 @@
 #include "leapfrog.hpp"
 #include "system.hpp"
 
-
 class DLL_EXPORT HMC
 {
   private:
