@@ -4,7 +4,7 @@ CXX = g++
 
 # The -MMD and -MP flags together generate Makefiles for us!
 # These files will have .d instead of .o as the output.
-CXXFLAGS = -O3 -std=c++17 -Wall -Wextra -Wpedantic -Werror -MMD -MP
+CXXFLAGS = -Ofast -march=native -std=c++17 -Wall -Wextra -Wpedantic -Werror -MMD -MP
 # CXXFLAGS = -g -Og -std=c++20 -Wall -Wextra -Wpedantic -Werror  -MMD -MP
 
 BUILD_DIR := ./build

@@ -17,9 +17,6 @@ class DLL_EXPORT QhoSystem : public HMCSystem
     int m_N;
     double m_m0;
     double m_omg0;
-    std::vector<std::size_t> m_idx;
-    std::vector<double> m_Phi_m;
-    std::vector<double> m_Phi_p;
     std::vector<double> m_dS;
 
   public:

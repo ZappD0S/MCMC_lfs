@@ -1,11 +1,12 @@
 #include "hmc.hpp"
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <memory>
 
 HMC::HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed)
     : m_system(system),
-      m_leapfrog(std::make_unique<Leapfrog>(system, Nhmc, epsilon))
+      m_leapfrog(std::make_unique<LeapfrogVanilla>(system, Nhmc, epsilon))
 {
     std::random_device rd;
     m_rng = std::make_unique<std::mt19937>(rd());
@@ -14,14 +15,14 @@ HMC::HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed)
 
 double HMC::T(const std::vector<double> &Phi) const
 {
-    auto op = [](double phi)
-    {
-        return std::pow(phi, 2);
-    };
+    double T = 0.0;
 
-    return 0.5 * std::transform_reduce(
-                     Phi.begin(), Phi.end(),
-                     0.0, std::plus{}, op);
+    for (std::size_t i = 0; i < Phi.size(); i++)
+    {
+        T += std::pow(Phi[i], 2);
+    }
+
+    return 0.5 * T;
 }
 
 int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared_ptr<HMCCallback>> &callbacks) const

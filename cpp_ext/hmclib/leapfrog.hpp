@@ -13,17 +13,26 @@ struct PhaseSpaceCoords
 class DLL_EXPORT Leapfrog
 {
   private:
+    PhaseSpaceCoords m_state0;
+    PhaseSpaceCoords m_state0_rev;
+    virtual void step_impl(PhaseSpaceCoords &state, bool backward = false) const = 0;
+
+  public:
+    bool step(PhaseSpaceCoords &state);
+};
+
+class DLL_EXPORT LeapfrogSTL : public Leapfrog
+{
+  private:
     std::shared_ptr<HMCSystem> m_system;
     int m_Nhmc;
     double m_epsilon;
     std::vector<std::size_t> m_idx;
-    PhaseSpaceCoords m_state0;
-    PhaseSpaceCoords m_state0_rev;
 
-    void step_impl(PhaseSpaceCoords &state, bool backward = false) const;
+    void step_impl(PhaseSpaceCoords &state, bool backward = false) const override;
 
   public:
-    Leapfrog(std::shared_ptr<HMCSystem> system, int NHmc, double epsilon)
+    LeapfrogSTL(std::shared_ptr<HMCSystem> system, int NHmc, double epsilon)
         : m_system(system),
           m_Nhmc(NHmc),
           m_epsilon(epsilon),
@@ -31,6 +40,27 @@ class DLL_EXPORT Leapfrog
     {
         std::iota(m_idx.begin(), m_idx.end(), 0);
     }
+};
 
-    bool step(PhaseSpaceCoords &state);
+class DLL_EXPORT LeapfrogVanilla : public Leapfrog
+{
+  private:
+    std::shared_ptr<HMCSystem> m_system;
+    int m_Nhmc;
+    double m_epsilon;
+    PhaseSpaceCoords m_state0;
+    PhaseSpaceCoords m_state0_rev;
+
+    static inline void update_Phi(std::vector<double> &Phi, const std::vector<double> &Pi, double epsilon);
+    static inline void update_Pi(std::vector<double> &Pi, const std::vector<double> &dS, double epsilon);
+
+    void step_impl(PhaseSpaceCoords &state, bool backward = false) const override;
+
+  public:
+    LeapfrogVanilla(std::shared_ptr<HMCSystem> system, int NHmc, double epsilon)
+        : m_system(system),
+          m_Nhmc(NHmc),
+          m_epsilon(epsilon)
+    {
+    }
 };

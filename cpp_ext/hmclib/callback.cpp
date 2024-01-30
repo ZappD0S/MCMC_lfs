@@ -45,6 +45,7 @@ void DeltaECallback::operator()(const std::vector<double> &Phi, bool last)
         m_samples[k].push_back(std::transform_reduce(
             Phi.begin(), Phi.end(), m_Phi_shift.begin(),
             0.0, std::plus{}, std::multiplies{}));
+
         if (last)
         {
             m_samples[k].shrink_to_fit();
