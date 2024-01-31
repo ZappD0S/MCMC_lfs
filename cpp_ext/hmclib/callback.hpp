@@ -16,7 +16,7 @@ class DLL_EXPORT LastPhiCallback : public HMCCallback
   public:
     const std::vector<double> &get_data() { return m_last_Phi; }
 
-    void operator()(const std::vector<double> &Phi, bool last);
+    void operator()(const std::vector<double> &Phi, bool last) override;
 };
 
 class DLL_EXPORT E0Callback : public HMCCallback
@@ -32,7 +32,7 @@ class DLL_EXPORT E0Callback : public HMCCallback
 
     const std::vector<double> &get_data() { return m_samples; }
 
-    void operator()(const std::vector<double> &Phi, bool last);
+    void operator()(const std::vector<double> &Phi, bool last) override;
 };
 
 class DLL_EXPORT DeltaECallback : public HMCCallback
@@ -54,5 +54,5 @@ class DLL_EXPORT DeltaECallback : public HMCCallback
         }
     }
 
-    void operator()(const std::vector<double> &Phi, bool last);
+    void operator()(const std::vector<double> &Phi, bool last) override;
 };
