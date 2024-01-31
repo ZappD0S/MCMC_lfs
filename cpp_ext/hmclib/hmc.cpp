@@ -26,13 +26,14 @@ double HMC::T(const std::vector<double> &Phi) const
 
 int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared_ptr<HMCCallback>> &callbacks) const
 {
-    assert(static_cast<int>(Phi0.size()) == m_system->size());
+    const auto N = m_system->size();
+    assert(static_cast<int>(Phi0.size()) == N);
 
     std::normal_distribution<> randn(0.0, 1.0);
     std::uniform_real_distribution<> rand(0.0, 1.0);
 
-    PhaseSpaceCoords cur{Phi0, std::vector<double>(Phi0.size())};
-    PhaseSpaceCoords proposal;
+    PhaseSpaceCoords cur{Phi0, std::vector<double>(N)};
+    PhaseSpaceCoords proposal{std::vector<double>(N), std::vector<double>(N)};
 
     auto &rng = *m_rng;
 
@@ -40,7 +41,7 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
     {
         proposal = cur;
 
-        for (int j = 0; j < m_system->size(); j++)
+        for (int j = 0; j < N; j++)
         {
             proposal.Pi[j] = randn(rng);
         }

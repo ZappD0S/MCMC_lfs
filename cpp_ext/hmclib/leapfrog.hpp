@@ -27,9 +27,6 @@ class DLL_EXPORT VanillaLeapfrog : public Leapfrog
     int m_Nhmc;
     double m_epsilon;
 
-    inline void update_Phi(std::vector<double> &Phi, const std::vector<double> &Pi, double epsilon) const;
-    inline void update_Pi(std::vector<double> &Pi, const std::vector<double> &Phi, double epsilon) const;
-
     void step_impl(PhaseSpaceCoords &state, bool backward = false) const override;
 
   public:

@@ -31,10 +31,10 @@ HMCLIB_DEPS := $(HMCLIB_OBJS:.o=.d)
 
 $(BUILD_DIR)/libhmclib.dll: $(HMCLIB_OBJS)
 	mkdir -p $(dir $@)
-	$(CXX) $(HMCLIB_OBJS) -o $@ -shared -flto -fPIC -Wl,--out-implib,$(@:.dll=.lib)
+	$(CXX) $(HMCLIB_OBJS) -o $@ -shared -fPIC -flto -Wl,--out-implib,$(@:.dll=.lib)
 $(HMCLIB_OBJS) : $(BUILD_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(INC_FLAGS) $(CXXFLAGS) -fPIC -c $< -o $@
+	$(CXX) $(INC_FLAGS) $(CXXFLAGS) -fPIC -flto -c $< -o $@
 
 .PHONY: hmclib
 hmclib: $(BUILD_DIR)/libhmclib.dll
