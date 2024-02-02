@@ -5,26 +5,26 @@
 class DLL_EXPORT HMCSystem
 {
   public:
-    virtual double S(const std::vector<double> &Phi) = 0;
+    virtual double S(const std::vector<double> &Phi) const = 0;
 
     virtual int size() const = 0;
 
-    virtual const std::vector<double> &dSdPhi(const std::vector<double> &Phi) = 0;
+    virtual void dSdPhi(std::vector<double> &dS, const std::vector<double> &Phi) const = 0;
 };
 
 class DLL_EXPORT QhoSystem : public HMCSystem
 {
+  private:
     int m_N;
     double m_m0;
     double m_omg0;
-    std::vector<double> m_dS;
 
   public:
     QhoSystem(int N, double m0, double omg0);
 
     int size() const override { return m_N; }
 
-    double S(const std::vector<double> &Phi) override;
+    double S(const std::vector<double> &Phi) const override;
 
-    const std::vector<double> &dSdPhi(const std::vector<double> &Phi) override;
+    void dSdPhi(std::vector<double> &dS, const std::vector<double> &Phi) const override;
 };

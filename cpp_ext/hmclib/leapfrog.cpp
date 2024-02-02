@@ -44,10 +44,11 @@ bool Leapfrog::step(PhaseSpaceCoords &state)
            allclose(m_state0.Pi, m_state0_rev.Pi);
 }
 
-void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward) const
+void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward)
 {
     auto &Phi = state.Phi;
     auto &Pi = state.Pi;
+    auto &dS = m_dS;
 
     const auto N = m_system->size();
     assert(static_cast<int>(Phi.size()) == N &&
@@ -66,7 +67,7 @@ void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward) const
 
     auto update_Pi = [&](double epsilon)
     {
-        const auto &dS = m_system->dSdPhi(Phi);
+        m_system->dSdPhi(dS, Phi);
 
         for (int i = 0; i < N; i++)
         {

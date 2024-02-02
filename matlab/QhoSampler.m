@@ -23,6 +23,9 @@ classdef QhoSampler
             omg0 = omg * a;
 
             [~, e0_samples, de_samples] = qho_sample(obj, N, m0, omg0);
+
+            e0_samples = e0_samples .* a ^ 2;
+            de_samples = de_samples .* a ^ 2;
         end
     end
 end
