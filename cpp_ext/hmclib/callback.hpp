@@ -19,13 +19,13 @@ class DLL_EXPORT LastPhiCallback : public HMCCallback
     void operator()(const std::vector<double> &Phi, bool last) override;
 };
 
-class DLL_EXPORT E0Callback : public HMCCallback
+class DLL_EXPORT X2Callback : public HMCCallback
 {
   private:
     std::vector<double> m_samples;
 
   public:
-    explicit E0Callback(std::size_t reserve_size = 0)
+    explicit X2Callback(std::size_t reserve_size = 0)
     {
         m_samples.reserve(reserve_size);
     }
@@ -35,7 +35,7 @@ class DLL_EXPORT E0Callback : public HMCCallback
     void operator()(const std::vector<double> &Phi, bool last) override;
 };
 
-class DLL_EXPORT DeltaECallback : public HMCCallback
+class DLL_EXPORT XXCallback : public HMCCallback
 {
   private:
     std::vector<std::vector<double>> m_samples;
@@ -44,7 +44,7 @@ class DLL_EXPORT DeltaECallback : public HMCCallback
   public:
     const std::vector<std::vector<double>> &get_data() { return m_samples; }
 
-    explicit DeltaECallback(int max_shift, int reserve_size = 0)
+    explicit XXCallback(int max_shift, int reserve_size = 0)
         : m_samples(std::vector<std::vector<double>>(max_shift)),
           m_max_shift(max_shift)
     {

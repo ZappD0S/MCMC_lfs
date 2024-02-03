@@ -18,14 +18,14 @@ classdef QhoSampler
             obj.seed = seed;
         end
 
-        function [e0_samples, de_samples] = sample(obj, a, N, m, omg)
+        function [x2_samples, xx_samples] = sample(obj, a, N, m, omg)
             m0 = m * a;
             omg0 = omg * a;
 
-            [~, e0_samples, de_samples] = qho_sample(obj, N, m0, omg0);
+            [~, x2_samples, xx_samples] = qho_sample(obj, N, m0, omg0);
 
-            e0_samples = e0_samples .* a ^ 2;
-            de_samples = de_samples .* a ^ 2;
+            x2_samples = x2_samples .* a ^ 2;
+            xx_samples = xx_samples .* a ^ 2;
         end
     end
 end

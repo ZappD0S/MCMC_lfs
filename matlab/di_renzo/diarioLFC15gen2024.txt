@@ -1,0 +1,508 @@
+
+
+what
+
+MATLAB Code files in the current folder /Users/francescodirenzo/Work/didattica/LFC2324/15gen
+
+HMCqmho         MYautocorr_fft  
+
+MAT-files in the current folder /Users/francescodirenzo/Work/didattica/LFC2324/15gen
+
+phi    phi04  phi05  phi08  
+
+
+load phi
+whos
+  Name            Size                 Bytes  Class     Attributes
+
+  phi       1000000x100            800000000  double              
+
+phi(:,1).^2;
+
+
+x2 = phi(:,1).^2;
+autocorr_x2 = MYautocorr_fft(x2,100)
+
+autocorr_x2 =
+
+    1.0000
+    0.0188
+    0.0293
+    0.0020
+    0.0005
+   -0.0005
+   -0.0006
+   -0.0031
+    0.0003
+   -0.0004
+    0.0017
+    0.0014
+   -0.0006
+    0.0011
+   -0.0014
+   -0.0017
+   -0.0020
+   -0.0011
+   -0.0004
+    0.0002
+   -0.0011
+   -0.0007
+   -0.0002
+    0.0016
+    0.0015
+    0.0012
+   -0.0001
+    0.0007
+    0.0003
+    0.0010
+   -0.0005
+    0.0005
+   -0.0008
+   -0.0012
+    0.0004
+   -0.0000
+   -0.0006
+   -0.0010
+   -0.0000
+    0.0017
+    0.0014
+    0.0009
+    0.0004
+    0.0007
+    0.0018
+    0.0010
+    0.0007
+   -0.0004
+    0.0007
+    0.0020
+   -0.0011
+   -0.0016
+    0.0003
+   -0.0005
+   -0.0012
+    0.0008
+    0.0012
+    0.0003
+   -0.0009
+   -0.0009
+    0.0011
+    0.0005
+    0.0003
+   -0.0015
+    0.0003
+   -0.0001
+    0.0003
+    0.0009
+    0.0001
+   -0.0008
+   -0.0002
+   -0.0024
+    0.0009
+   -0.0008
+   -0.0005
+   -0.0015
+    0.0007
+    0.0002
+   -0.0018
+   -0.0011
+   -0.0013
+   -0.0007
+   -0.0006
+   -0.0009
+    0.0003
+   -0.0014
+    0.0012
+   -0.0006
+    0.0006
+   -0.0000
+   -0.0012
+   -0.0002
+    0.0009
+    0.0014
+    0.0005
+   -0.0007
+    0.0003
+    0.0003
+   -0.0016
+   -0.0002
+    0.0001
+
+plot(autocorr_x2)
+plot(autocorr_x2,'.')
+whos
+  Name                   Size                 Bytes  Class     Attributes
+
+  ans              1000000x1                8000000  double              
+  autocorr_x2          101x1                    808  double              
+  phi              1000000x100            800000000  double              
+  x2               1000000x1                8000000  double              
+
+x2_2 = phi(:,22).^2;
+autocorr_x2_2 = MYautocorr_fft(x2_2,100);
+plot(autocorr_x2_2,'.')
+shg
+edit test_rev
+
+rev = test_rev(phi(end,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.2192    0.1175
+
+rev = test_rev(phi(1,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.1743    0.1262
+
+what
+
+MATLAB Code files in the current folder /Users/francescodirenzo/Work/didattica/LFC2324/15gen
+
+HMCqmho         MYautocorr_fft  test_rev        
+
+MAT-files in the current folder /Users/francescodirenzo/Work/didattica/LFC2324/15gen
+
+phi    phi04  phi05  phi08  
+
+
+load phi08
+acc
+{Unrecognized function or variable 'acc'.
+} 
+whos
+  Name                     Size                  Bytes  Class     Attributes
+
+  acc08                    1x1                       8  double              
+  ans                1000000x1                 8000000  double              
+  autocorr_x2            101x1                     808  double              
+  autocorr_x2_2          101x1                     808  double              
+  phi                1000000x100             800000000  double              
+  phi08              1000000x125            1000000000  double              
+  rev                      1x2                      16  double              
+  x2                 1000000x1                 8000000  double              
+  x2_2               1000000x1                 8000000  double              
+
+acc08
+
+acc08 =
+
+    0.9998
+
+rev = test_rev(phi08(1,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.2113    0.1159
+
+rev = test_rev(phi08(end,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.2294    0.1448
+
+size(mean(phi08.^2))
+
+ans =
+
+     1   125
+
+size(mean(phi08.^2,2))
+
+ans =
+
+     1000000           1
+
+x2 = mean(phi08.^2,2);
+autocorr_x2 = MYautocorr_fft(x2,100);
+plot(autocorr_x2,'.')
+what
+
+MATLAB Code files in the current folder /Users/francescodirenzo/Work/didattica/LFC2324/15gen
+
+HMCqmho         MYautocorr_fft  test_rev        
+
+MAT-files in the current folder /Users/francescodirenzo/Work/didattica/LFC2324/15gen
+
+phi    phi04  phi05  phi08  
+
+
+load phi05
+acc05
+
+acc05 =
+
+    0.9998
+
+rev = test_rev(phi05(end,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.3655    0.2299
+
+rev = test_rev(phi05(1,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.3874    0.2481
+
+x2_05 = mean(phi05.^2,2);
+autocorr_x2_05 = MYautocorr_fft(x2_05,100);
+shg
+plot(autocorr_x2,'.')
+hold on
+plot(autocorr_x2_05,'.')
+shg
+load phi04
+acc
+{Unrecognized function or variable 'acc'.
+} 
+acc04
+
+acc04 =
+
+    0.9999
+
+rev = test_rev(phi04(1,:),1,1,0.01,99)
+
+rev =
+
+   1.0e-14 *
+
+    0.5536    0.3175
+
+x2_04 = mean(phi04.^2,2);
+autocorr_x2_04 = MYautocorr_fft(x2_04,100);
+plot(autocorr_x2_04,'.')
+shg
+close all
+plot(cumsum(autocorr_x2))
+hold on
+plot(cumsum(autocorr_x2_05))
+shg
+figure
+hist(x2)
+shg
+hist(x2,50)
+shg
+figure
+figure(2)
+hold on
+hold off
+hist(x2*0.8^2,50)
+shg
+figure(3)
+hist(x2_05*0.5^2,50)
+shg
+figure(1)
+plot(cumsum(autocorr_x2_04))
+shg
+
+xx_1 = mean(mean(phi.^2));
+M = [1:3;2:4]
+
+M =
+
+     1     2     3
+     2     3     4
+
+circshift(M,1)
+
+ans =
+
+     2     3     4
+     1     2     3
+
+circshift(M,1,2)
+
+ans =
+
+     3     1     2
+     4     2     3
+
+circshift(M,-1,2)
+
+ans =
+
+     2     3     1
+     3     4     2
+
+phi_shift = circshift(phi,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653    0.0250
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653    0.0250    0.0095
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653    0.0250    0.0095    0.0037
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653    0.0250    0.0095    0.0037    0.0014
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653    0.0250    0.0095    0.0037    0.0014    0.0006
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+    0.4472    0.1709    0.0653    0.0250    0.0095    0.0037    0.0014    0.0006    0.0003
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+  Columns 1 through 9
+
+    0.4472    0.1709    0.0653    0.0250    0.0095    0.0037    0.0014    0.0006    0.0003
+
+  Column 10
+
+    0.0002
+
+phi_shift = circshift(phi_shift,1,2);
+xx_1(end+1) = mean(mean(phi.*phi_shift))
+
+xx_1 =
+
+  Columns 1 through 9
+
+    0.4472    0.1709    0.0653    0.0250    0.0095    0.0037    0.0014    0.0006    0.0003
+
+  Columns 10 through 11
+
+    0.0002    0.0002
+
+plot(xx_1)
+shg
+close all
+plot(xx_1)
+semilogy(xx_1,'.')
+shg
+edit lunghezza_corr
+M
+
+M =
+
+     1     2     3
+     2     3     4
+
+circshift(M,0,2)
+
+ans =
+
+     1     2     3
+     2     3     4
+
+xx_08 = fun_corr(phi_08,11)
+{Unrecognized function or variable 'phi_08'.
+} 
+xx_08 = fun_corr(phi08,11)
+{Output argument "xx" (and possibly others) not assigned a value in the execution with "fun_corr"
+function.
+} 
+xx_08 = fun_corr(phi08,11)
+
+xx_08 =
+
+  Columns 1 through 9
+
+    0.7252    0.3324    0.1523    0.0699    0.0321    0.0148    0.0069    0.0032    0.0013
+
+  Columns 10 through 11
+
+    0.0005    0.0001
+
+whos
+  Name                      Size                  Bytes  Class     Attributes
+
+  M                         2x3                      48  double              
+  acc04                     1x1                       8  double              
+  acc05                     1x1                       8  double              
+  acc08                     1x1                       8  double              
+  ans                       2x3                      48  double              
+  autocorr_x2             101x1                     808  double              
+  autocorr_x2_04          101x1                     808  double              
+  autocorr_x2_05          101x1                     808  double              
+  autocorr_x2_2           101x1                     808  double              
+  phi                 1000000x100             800000000  double              
+  phi04               1000000x250            2000000000  double              
+  phi05               1000000x200            1600000000  double              
+  phi08               1000000x125            1000000000  double              
+  phi_shift           1000000x100             800000000  double              
+  rev                       1x2                      16  double              
+  x2                  1000000x1                 8000000  double              
+  x2_04               1000000x1                 8000000  double              
+  x2_05               1000000x1                 8000000  double              
+  x2_2                1000000x1                 8000000  double              
+  xx_08                     1x11                     88  double              
+  xx_1                      1x11                     88  double              
+
+shg
+plot(xx_1)
+plot(xx_1,'.')
+shg
+hold on
+plot(xx_08,'.')
+shg
+close all
+plot(xx_1,'.')
+hold on
+plot(xx_08*0.8^2,'.')
+shg
+close all
+plot(xx_1,'.')
+plot(0:10,xx_1,'.')
+shg
+hold on
+plot((0:10)*0.8,xx_08*0.8^2,'.')
+shg
+diary off

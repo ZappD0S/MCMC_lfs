@@ -1,63 +1,36 @@
-function [Phi, p_acc] = estimate_energies(a, N, S_f, dSdPhi_f, m0, omg0)
+function [E0, dE0,  DeltaE, dDeltaE] = estimate_energies(qho_sampler, a, N, m, omg)
 
-m0_hat = m0 * a;
-omg0_hat = omg0 * a;
+[x2_samples, xx_samples] = qho_sampler.sample(a, N, m, omg);
 
-Phi0 = zeros(1, N);
-Nhmc = 20;
+e0_samples = m * omg ^ 2 .* x2_samples;
 
-epsilon = find_best_epsilon(S_f, dSdPhi_f, Nhmc, Phi0, m0_hat, omg0_hat)
-% epsilon = 0.01
+E0 = mean(e0_samples);
 
-Phi_warmup = HMC(epsilon, 1e4, Nhmc, S_f, dSdPhi_f, Phi0, m0_hat, omg0_hat);
-[Phi_hat, p_acc] = HMC(epsilon, 1e5, Nhmc, S_f, dSdPhi_f, Phi_warmup(end, :), m0_hat, omg0_hat);
+e0_autocorr = MYautocorr_fft(e0_samples, floor(length(e0_samples) / 2));
+tau_int = max(cumsum(e0_autocorr)) - 0.5;
 
-p_acc
+dE0 = std(e0_samples) / sqrt(length(e0_samples) / (2 * tau_int));
 
-Phi = Phi_hat * a;
+% xx_samples size: (Niter, max_shift)
 
-E0_samples = m0 * omg0 ^ 2 * mean(Phi .^ 2, 2); % teorema viriale..
+N = size(xx_samples, 1);
 
-E0 = mean(E0_samples)
+xx_autocorrs = MYautocorr_fft(xx_samples, floor(N / 2));
+tau_ints = max(cumsum(xx_autocorrs)) - 0.5;
 
-acf = my_autocorr(E0_samples, floor(N / 2));
+xx_var = var(xx_samples) / (N / (2 * tau_ints));
+weights = 1 ./ xx_var;
 
-tau_int = 0.5 + max(cumsum(acf));
+% A*x = B -> lscov(A,B,w)
 
-dE0_wrong = std(E0_samples) / sqrt(length(E0_samples))
-dE0 = std(E0_samples) / sqrt(length(E0_samples) / (2 * tau_int))
+B = log(mean(xx_samples));
 
+max_shift = size(xx_samples, 2);
+A = [-(1:max_shift) .* a; ones(1, max_shift)];
 
-% for k=1:10
-%     Phi_pad = [Phi Phi(:, 1:k)];
-%     delta = mean(Phi_pad(:, (1 + k):end) .* Phi_pad(:, 1:(end - k)), 2);
-% end
+[x, stdx] = lscov(A', B', weights);
 
-end
-
-
-function best_epsilon = find_best_epsilon(S_f, dSdPhi_f, Nhmc, Phi0, m0_hat, omg0_hat)
-
-    function target = f(epsilon)
-        [~, p_acc] = HMC(epsilon, 1e3, Nhmc, S_f, dSdPhi_f, Phi0, m0_hat, omg0_hat);
-        target = p_acc - 0.5;
-    end
-
-upper = 1;
-
-while true
-    try
-        best_epsilon = fzero(@f, [0, upper]);
-        break;
-    catch ME
-        if ME.identifier == "MATLAB:fzero:ValuesAtEndPtsSameSign"
-            upper = upper * 1.5;
-        elseif ME.identifier ==  "MATLAB:fzero:InvalidFunctionSupplied"
-            upper = upper / 1.5;
-        else
-            rethrow(ME)
-        end
-    end
-end
+DeltaE = x(1);
+dDeltaE = stdx(1);
 
 end

@@ -14,7 +14,7 @@ class DLL_EXPORT HMC
     std::unique_ptr<Leapfrog> m_leapfrog;
     std::unique_ptr<std::mt19937> m_rng;
 
-    double T(const std::vector<double> &Phi) const;
+    double T(const std::vector<double> &Pi) const;
 
   public:
     const HMCSystem &get_system() { return *m_system; }

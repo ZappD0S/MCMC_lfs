@@ -1,7 +1,12 @@
-#include "cppshrhelp.hpp"
 #include "system.hpp"
 #include <memory>
 #include <vector>
+
+bool allclose(
+    const std::vector<double> &a,
+    const std::vector<double> &b,
+    double rtol = 1e-5,
+    double atol = 1e-8);
 
 struct PhaseSpaceCoords
 {
@@ -9,7 +14,7 @@ struct PhaseSpaceCoords
     std::vector<double> Pi;
 };
 
-class DLL_EXPORT Leapfrog
+class Leapfrog
 {
   private:
     PhaseSpaceCoords m_state0;
@@ -20,14 +25,13 @@ class DLL_EXPORT Leapfrog
     bool step(PhaseSpaceCoords &state);
 };
 
-class DLL_EXPORT VanillaLeapfrog : public Leapfrog
+class VanillaLeapfrog : public Leapfrog
 {
   private:
     std::shared_ptr<HMCSystem> m_system;
     int m_Nhmc;
     double m_epsilon;
     std::vector<double> m_dS;
-
 
     void step_impl(PhaseSpaceCoords &state, bool backward = false) override;
 

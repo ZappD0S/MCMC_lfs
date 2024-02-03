@@ -12,13 +12,13 @@ HMC::HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed)
     m_rng->seed(seed);
 }
 
-double HMC::T(const std::vector<double> &Phi) const
+double HMC::T(const std::vector<double> &Pi) const
 {
     double T = 0.0;
 
-    for (std::size_t i = 0; i < Phi.size(); i++)
+    for (std::size_t i = 0; i < Pi.size(); i++)
     {
-        T += std::pow(Phi[i], 2);
+        T += std::pow(Pi[i], 2);
     }
 
     return 0.5 * T;
@@ -39,12 +39,12 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
 
     for (int i = 0; i < Niter; i++)
     {
-        proposal = cur;
-
         for (int j = 0; j < N; j++)
         {
-            proposal.Pi[j] = randn(rng);
+            cur.Pi[j] = randn(rng);
         }
+
+        proposal = cur;
 
         auto success = m_leapfrog->step(proposal);
 
@@ -53,8 +53,8 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
             return -1;
         }
 
-        auto H = T(cur.Phi) + m_system->S(cur.Phi);
-        auto H_proposal = T(proposal.Phi) + m_system->S(proposal.Phi);
+        auto H = T(cur.Pi) + m_system->S(cur.Phi);
+        auto H_proposal = T(proposal.Pi) + m_system->S(proposal.Phi);
         auto dH = H_proposal - H;
 
         if (dH <= 0 || rand(rng) < std::exp(-dH))

@@ -6,8 +6,8 @@
 bool allclose(
     const std::vector<double> &a,
     const std::vector<double> &b,
-    double rtol = 1e-5,
-    double atol = 1e-8)
+    double rtol,
+    double atol)
 {
     assert(a.size() == b.size());
 
@@ -36,6 +36,7 @@ bool Leapfrog::step(PhaseSpaceCoords &state)
 
     step_impl(state);
 
+    // TODO: make this step optional..
     m_state0_rev = state;
 
     step_impl(m_state0_rev, true);

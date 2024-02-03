@@ -36,12 +36,6 @@ class MexFunction : public matlab::mex::Function
 
         std::vector<double> Phi0(N, 0.0);
 
-        displayOnMATLAB(std::to_string(N));
-        displayOnMATLAB(std::to_string(N_warmup));
-        displayOnMATLAB(std::to_string(N_sample));
-        displayOnMATLAB(std::to_string(NHmc));
-        displayOnMATLAB(std::to_string(seed));
-
         auto sys = std::make_unique<QhoSystem>(N, m0, omg0);
         HMC hmc(std::move(sys), NHmc, epsilon, seed);
 
@@ -54,45 +48,47 @@ class MexFunction : public matlab::mex::Function
         if (hmc.run(Phi0, N_warmup, callbacks) != 0)
         {
             matlabPtr->feval(u"error",
-                             0, std::vector<matlab::data::Array>({factory.createScalar("leapfrog not reversible!")}));
+                             0,
+                             std::vector<matlab::data::Array>(
+                                 {factory.createScalar("leapfrog not reversible!")}));
         }
 
         Phi0 = lastPhi_callback->get_data();
 
         callbacks.clear();
-        auto e0_callback = std::make_shared<E0Callback>();
-        auto de_callback = std::make_shared<DeltaECallback>(10);
-        callbacks.push_back(e0_callback);
-        callbacks.push_back(de_callback);
+        auto x2_callback = std::make_shared<X2Callback>(N_sample);
+        auto xx_callback = std::make_shared<XXCallback>(10, N_sample);
+        callbacks.push_back(x2_callback);
+        callbacks.push_back(xx_callback);
 
         if (hmc.run(Phi0, N_sample, callbacks) != 0)
         {
             matlabPtr->feval(u"error",
-                             0, std::vector<matlab::data::Array>({factory.createScalar("leapfrog not reversible!")}));
+                             0,
+                             std::vector<matlab::data::Array>(
+                                 {factory.createScalar("leapfrog not reversible!")}));
         }
 
-        displayOnMATLAB("we get here!");
+        const auto &x2_samples = x2_callback->get_data();
+        const auto &xx_samples = xx_callback->get_data();
 
-        // const auto &e0_samples = e0_callback->get_data();
-        // const auto &de_samples = de_callback->get_data();
+        auto x2_matlab = factory.createArray(
+            {1, x2_samples.size()},
+            x2_samples.begin(),
+            x2_samples.end());
 
-        auto e0_matlab = factory.createArray<double>({1, 10});
+        auto xx_matlab = factory.createArray<double>(
+            {xx_samples[0].size(), xx_samples.size()});
 
-        auto de_matlab = factory.createArray<double>({100, 10});
-
-        // auto e0_matlab = factory.createArray({1, e0_samples.size()}, e0_samples.begin(), e0_samples.end());
-
-        // auto de_matlab = factory.createArray<double>({de_samples[0].size(), de_samples.size()});
-
-        // auto de_matlab_it = de_matlab.begin();
-        // for (auto column = de_samples.begin(); column != de_samples.end(); column++)
-        // {
-        //     de_matlab_it = std::copy(column->begin(), column->end(), de_matlab_it);
-        // }
+        auto xx_matlab_it = xx_matlab.begin();
+        for (auto column = xx_samples.begin(); column != xx_samples.end(); column++)
+        {
+            xx_matlab_it = std::copy(column->begin(), column->end(), xx_matlab_it);
+        }
 
         outputs[0] = obj;
-        outputs[1] = std::move(e0_matlab);
-        outputs[2] = std::move(de_matlab);
+        outputs[1] = std::move(x2_matlab);
+        outputs[2] = std::move(xx_matlab);
     }
 
     // void checkArguments([[maybe_unused]] matlab::mex::ArgumentList outputs, [[maybe_unused]] matlab::mex::ArgumentList inputs)

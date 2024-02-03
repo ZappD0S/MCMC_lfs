@@ -25,8 +25,8 @@ int main()
     Phi0 = lastPhi_callback->get_data();
 
     callbacks.clear();
-    auto e0_callback = std::make_shared<E0Callback>(1e6);
-    auto de_callback = std::make_shared<DeltaECallback>(10, 1e6);
+    auto e0_callback = std::make_shared<X2Callback>(1e6);
+    auto de_callback = std::make_shared<XXCallback>(10, 1e6);
     callbacks.push_back(e0_callback);
     callbacks.push_back(de_callback);
 
