@@ -1,30 +1,34 @@
 #include "hmc.hpp"
+#include "pairwise.hpp"
 #include <cassert>
-#include <cstddef>
 #include <memory>
 
 HMC::HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed)
     : m_system(system),
-      m_leapfrog(std::make_unique<VanillaLeapfrog>(system, Nhmc, epsilon))
+      m_leapfrog(std::make_unique<VanillaLeapfrog>(system, Nhmc, epsilon)),
+      m_T_buffer(system->size())
 {
     std::random_device rd;
     m_rng = std::make_unique<std::mt19937>(rd());
     m_rng->seed(seed);
 }
 
-double HMC::T(const std::vector<double> &Pi) const
+double HMC::T(const std::vector<double> &Pi)
 {
-    double T = 0.0;
+    const auto N = m_system->size();
 
-    for (std::size_t i = 0; i < Pi.size(); i++)
+    assert(static_cast<int>(Pi.size()) == N &&
+           static_cast<int>(m_T_buffer.size()) == N);
+
+    for (auto i = 0; i < N; i++)
     {
-        T += std::pow(Pi[i], 2);
+        m_T_buffer[i] = std::pow(Pi[i], 2);
     }
 
-    return 0.5 * T;
+    return 0.5 * pairwise_sum(m_T_buffer);
 }
 
-int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared_ptr<HMCCallback>> &callbacks) const
+int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared_ptr<HMCCallback>> &callbacks)
 {
     const auto N = m_system->size();
     assert(static_cast<int>(Phi0.size()) == N);
@@ -37,9 +41,9 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
 
     auto &rng = *m_rng;
 
-    for (int i = 0; i < Niter; i++)
+    for (auto i = 0; i < Niter; i++)
     {
-        for (int j = 0; j < N; j++)
+        for (auto j = 0; j < N; j++)
         {
             cur.Pi[j] = randn(rng);
         }
@@ -53,9 +57,9 @@ int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared
             return -1;
         }
 
-        auto H = T(cur.Pi) + m_system->S(cur.Phi);
-        auto H_proposal = T(proposal.Pi) + m_system->S(proposal.Phi);
-        auto dH = H_proposal - H;
+        auto dT = T(proposal.Pi) - T(cur.Pi);
+        auto dS = m_system->S(proposal.Phi) - m_system->S(cur.Phi);
+        auto dH = dT + dS;
 
         if (dH <= 0 || rand(rng) < std::exp(-dH))
         {

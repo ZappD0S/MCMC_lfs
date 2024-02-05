@@ -1,4 +1,5 @@
 #include "system.hpp"
+#include "pairwise.hpp"
 #include <cassert>
 #include <cmath>
 #include <vector>
@@ -6,31 +7,31 @@
 QhoSystem::QhoSystem(int N, double m0, double omg0)
     : m_N(N),
       m_m0(m0),
-      m_omg0(omg0)
+      m_omg0(omg0),
+      m_S_buffer(N)
 {
 }
 
-double QhoSystem::S(const std::vector<double> &Phi) const
+double QhoSystem::S(const std::vector<double> &Phi)
 {
     const auto N = m_N;
 
-    assert(static_cast<int>(Phi.size()) == N);
+    assert(static_cast<int>(Phi.size()) == N &&
+           static_cast<int>(m_S_buffer.size()) == N);
 
     auto op = [&, m0 = m_m0, omg0 = m_omg0](auto i, auto i_p)
     {
         return 0.5 * m0 * (std::pow(Phi[i_p] - Phi[i], 2) + std::pow(omg0 * Phi[i], 2));
     };
 
-    double S = 0.0;
-
-    for (int i = 0; i < N - 1; i++)
+    for (auto i = 0; i < N - 1; i++)
     {
-        S += op(i, i + 1);
+        m_S_buffer[i] = op(i, i + 1);
     }
 
-    S += op(N - 1, 0);
+    m_S_buffer[N - 1] = op(N - 1, 0);
 
-    return S;
+    return pairwise_sum(m_S_buffer);
 }
 
 void QhoSystem::dSdPhi(std::vector<double> &dS, const std::vector<double> &Phi) const
@@ -47,7 +48,7 @@ void QhoSystem::dSdPhi(std::vector<double> &dS, const std::vector<double> &Phi) 
 
     dS[0] = op(N - 1, 0, 1);
 
-    for (int i = 1; i < N - 1; i++)
+    for (auto i = 1; i < N - 1; i++)
     {
         dS[i] = op(i - 1, i, i + 1);
     }

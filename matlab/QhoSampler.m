@@ -1,11 +1,12 @@
 classdef QhoSampler
     properties
-        N_warmup(1,1) {mustBeInteger, mustBePositive} = 1e3
-        N_sample(1,1) {mustBeInteger, mustBePositive} = 1e5
+        N_warmup(1,1) {mustBeInteger, mustBePositive} = 1e5
+        N_sample(1,1) {mustBeInteger, mustBePositive} = 1e6
 
         NHmc(1,1) {mustBeInteger, mustBePositive} = 100
-        epsilon(1,1) double {mustBeReal, mustBePositive} = 0.1
+        epsilon(1,1) double {mustBeReal, mustBePositive} = 0.01
 
+        max_shift {mustBeInteger, mustBePositive} = 10
         % ??
         seed(1,1) {mustBeInteger} = 1234
     end

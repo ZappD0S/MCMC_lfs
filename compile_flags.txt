@@ -1,2 +1,3 @@
+-std=c++20
 -Icpp_ext/hmclib
 -IC:/Program Files/MATLAB/R2023b/extern/include

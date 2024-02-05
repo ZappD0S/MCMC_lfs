@@ -23,6 +23,7 @@ class DLL_EXPORT X2Callback : public HMCCallback
 {
   private:
     std::vector<double> m_samples;
+    std::vector<double> m_x2_buffer;
 
   public:
     explicit X2Callback(std::size_t reserve_size = 0)
@@ -40,6 +41,7 @@ class DLL_EXPORT XXCallback : public HMCCallback
   private:
     std::vector<std::vector<double>> m_samples;
     int m_max_shift;
+    std::vector<double> m_xx_buffer;
 
   public:
     const std::vector<std::vector<double>> &get_data() { return m_samples; }
@@ -48,9 +50,9 @@ class DLL_EXPORT XXCallback : public HMCCallback
         : m_samples(std::vector<std::vector<double>>(max_shift)),
           m_max_shift(max_shift)
     {
-        for (int k = 0; k < max_shift; k++)
+        for (auto i = 0; i < max_shift; i++)
         {
-            m_samples[k].reserve(reserve_size);
+            m_samples[i].reserve(reserve_size);
         }
     }
 

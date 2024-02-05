@@ -18,7 +18,7 @@ N = size(xx_samples, 1);
 xx_autocorrs = MYautocorr_fft(xx_samples, floor(N / 2));
 tau_ints = max(cumsum(xx_autocorrs)) - 0.5;
 
-xx_var = var(xx_samples) / (N / (2 * tau_ints));
+xx_var = var(xx_samples) ./ (N ./ (2 * tau_ints));
 weights = 1 ./ xx_var;
 
 % A*x = B -> lscov(A,B,w)

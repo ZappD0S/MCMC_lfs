@@ -28,6 +28,8 @@ class MexFunction : public matlab::mex::Function
         int NHmc = matlabPtr->getProperty(obj, u"NHmc")[0];
         double epsilon = matlabPtr->getProperty(obj, u"epsilon")[0];
 
+        int max_shift = matlabPtr->getProperty(obj, u"max_shift")[0];
+
         int seed = matlabPtr->getProperty(obj, u"seed")[0];
 
         int N = inputs[1][0];
@@ -57,7 +59,7 @@ class MexFunction : public matlab::mex::Function
 
         callbacks.clear();
         auto x2_callback = std::make_shared<X2Callback>(N_sample);
-        auto xx_callback = std::make_shared<XXCallback>(10, N_sample);
+        auto xx_callback = std::make_shared<XXCallback>(max_shift, N_sample);
         callbacks.push_back(x2_callback);
         callbacks.push_back(xx_callback);
 

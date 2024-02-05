@@ -1,7 +1,6 @@
 #include "leapfrog.hpp"
 #include <cassert>
 #include <cmath>
-#include <cstddef>
 
 bool allclose(
     const std::vector<double> &a,
@@ -10,6 +9,7 @@ bool allclose(
     double atol)
 {
     assert(a.size() == b.size());
+    auto N = static_cast<int>(a.size());
 
     auto pred = [=](auto x, auto y) -> bool
     {
@@ -22,7 +22,7 @@ bool allclose(
 
     bool res = true;
 
-    for (std::size_t i = 0; i < a.size(); i++)
+    for (auto i = 0; i < N; i++)
     {
         res &= pred(a[i], b[i]);
     }
@@ -60,7 +60,7 @@ void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward)
 
     auto update_Phi = [&](double epsilon)
     {
-        for (int i = 0; i < N; i++)
+        for (auto i = 0; i < N; i++)
         {
             Phi[i] += epsilon * Pi[i];
         }
@@ -70,7 +70,7 @@ void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward)
     {
         m_system->dSdPhi(dS, Phi);
 
-        for (int i = 0; i < N; i++)
+        for (auto i = 0; i < N; i++)
         {
             Pi[i] -= epsilon * dS[i];
         }
@@ -78,7 +78,7 @@ void VanillaLeapfrog::step_impl(PhaseSpaceCoords &state, bool backward)
 
     update_Pi(0.5 * epsilon);
 
-    for (int step = 0; step < m_Nhmc; step++)
+    for (auto step = 0; step < m_Nhmc; step++)
     {
         update_Phi(epsilon);
         update_Pi(epsilon);
