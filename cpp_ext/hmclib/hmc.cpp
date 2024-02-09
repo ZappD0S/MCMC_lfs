@@ -3,14 +3,35 @@
 #include <cassert>
 #include <memory>
 
-HMC::HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed)
+HMC::HMC(std::shared_ptr<HMCSystem> system,
+         int Nhmc,
+         double epsilon,
+         bool rev_check,
+         std::optional<int> seed)
     : m_system(system),
-      m_leapfrog(std::make_unique<VanillaLeapfrog>(system, Nhmc, epsilon)),
+      m_leapfrog(std::make_unique<VanillaLeapfrog>(system, Nhmc, epsilon, rev_check)),
       m_T_buffer(system->size())
 {
-    std::random_device rd;
-    m_rng = std::make_unique<std::mt19937>(rd());
-    m_rng->seed(seed);
+
+    if (seed)
+    {
+        m_rng = std::make_unique<std::mt19937>(*seed);
+    }
+    else
+    {
+        std::random_device r;
+        std::seed_seq sseq{
+            r(),
+            r(),
+            r(),
+            r(),
+            r(),
+            r(),
+            r(),
+            r(),
+        };
+        m_rng = std::make_unique<std::mt19937>(sseq);
+    }
 }
 
 double HMC::T(const std::vector<double> &Pi)
@@ -28,7 +49,9 @@ double HMC::T(const std::vector<double> &Pi)
     return 0.5 * pairwise_sum(m_T_buffer);
 }
 
-int HMC::run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared_ptr<HMCCallback>> &callbacks)
+int HMC::run(const std::vector<double> &Phi0,
+             int Niter,
+             std::vector<std::shared_ptr<HMCCallback>> &callbacks)
 {
     const auto N = m_system->size();
     assert(static_cast<int>(Phi0.size()) == N);

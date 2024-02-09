@@ -6,19 +6,12 @@ classdef QhoSampler
         NHmc(1,1) {mustBeInteger, mustBePositive} = 100
         epsilon(1,1) double {mustBeReal, mustBePositive} = 0.01
 
-        max_shift {mustBeInteger, mustBePositive} = 10
-        % ??
-        seed(1,1) {mustBeInteger} = 1234
+        max_shift {mustBeInteger, mustBePositive} = 7
+
+        rev_check (1,1) logical = 1
+        seed {mustBeInteger} = []
     end
     methods
-        function obj = QhoSampler(N_warmup, N_sample, NHmc, epsilon, seed)
-            obj.N_warmup = N_warmup;
-            obj.N_sample = N_sample;
-            obj.NHmc = NHmc;
-            obj.epsilon = epsilon;
-            obj.seed = seed;
-        end
-
         function [x2_samples, xx_samples] = sample(obj, a, N, m, omg)
             m0 = m * a;
             omg0 = omg * a;

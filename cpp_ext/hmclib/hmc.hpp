@@ -1,4 +1,5 @@
 #include <memory>
+#include <optional>
 #include <random>
 #include <vector>
 
@@ -20,7 +21,13 @@ class DLL_EXPORT HMC
   public:
     const HMCSystem &get_system() { return *m_system; }
 
-    HMC(std::shared_ptr<HMCSystem> system, int Nhmc, double epsilon, int seed);
+    HMC(std::shared_ptr<HMCSystem> system,
+        int Nhmc,
+        double epsilon,
+        bool rev_check,
+        std::optional<int> seed = std::nullopt);
 
-    int run(const std::vector<double> &Phi0, int Niter, std::vector<std::shared_ptr<HMCCallback>> &callbacks);
+    int run(const std::vector<double> &Phi0,
+            int Niter,
+            std::vector<std::shared_ptr<HMCCallback>> &callbacks);
 };

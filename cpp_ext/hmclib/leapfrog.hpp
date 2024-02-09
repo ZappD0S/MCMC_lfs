@@ -17,12 +17,15 @@ struct PhaseSpaceCoords
 class Leapfrog
 {
   private:
+    bool m_rev_check;
     PhaseSpaceCoords m_state0;
     PhaseSpaceCoords m_state0_rev;
     virtual void step_impl(PhaseSpaceCoords &state, bool backward = false) = 0;
 
   public:
     bool step(PhaseSpaceCoords &state);
+
+    Leapfrog(bool rev_check) : m_rev_check(rev_check) {}
 };
 
 class VanillaLeapfrog : public Leapfrog
@@ -36,8 +39,9 @@ class VanillaLeapfrog : public Leapfrog
     void step_impl(PhaseSpaceCoords &state, bool backward = false) override;
 
   public:
-    VanillaLeapfrog(std::shared_ptr<HMCSystem> system, int NHmc, double epsilon)
-        : m_system(system),
+    VanillaLeapfrog(std::shared_ptr<HMCSystem> system, int NHmc, double epsilon, bool rev_check)
+        : Leapfrog(rev_check),
+          m_system(system),
           m_Nhmc(NHmc),
           m_epsilon(epsilon),
           m_dS(std::vector<double>(system->size()))

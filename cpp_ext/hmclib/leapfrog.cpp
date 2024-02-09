@@ -36,7 +36,11 @@ bool Leapfrog::step(PhaseSpaceCoords &state)
 
     step_impl(state);
 
-    // TODO: make this step optional..
+    if (!m_rev_check)
+    {
+        return true;
+    }
+
     m_state0_rev = state;
 
     step_impl(m_state0_rev, true);

@@ -1,6 +1,7 @@
 #include "hmc.hpp"
 #include "mex.hpp"
 #include "mexAdapter.hpp"
+#include <optional>
 
 class MexFunction : public matlab::mex::Function
 {
@@ -30,7 +31,14 @@ class MexFunction : public matlab::mex::Function
 
         int max_shift = matlabPtr->getProperty(obj, u"max_shift")[0];
 
-        int seed = matlabPtr->getProperty(obj, u"seed")[0];
+        bool rev_check = matlabPtr->getProperty(obj, u"rev_check")[0];
+
+        std::optional<int> seed;
+        auto maybe_seed = matlabPtr->getProperty(obj, u"seed");
+        if (!maybe_seed.isEmpty())
+        {
+            seed = maybe_seed[0];
+        }
 
         int N = inputs[1][0];
         double m0 = inputs[2][0];
@@ -39,7 +47,7 @@ class MexFunction : public matlab::mex::Function
         std::vector<double> Phi0(N, 0.0);
 
         auto sys = std::make_unique<QhoSystem>(N, m0, omg0);
-        HMC hmc(std::move(sys), NHmc, epsilon, seed);
+        HMC hmc(std::move(sys), NHmc, epsilon, rev_check, seed);
 
         std::vector<std::shared_ptr<HMCCallback>> callbacks;
         callbacks.reserve(2);
