@@ -41,7 +41,7 @@ void QhoSystem::dSdPhi(std::vector<double> &dS, const std::vector<double> &Phi) 
     assert(static_cast<int>(dS.size()) == N &&
            static_cast<int>(Phi.size()) == N);
 
-    auto op = [&, m0 = m_omg0, omg0 = m_omg0](auto i_m, auto i, auto i_p)
+    auto op = [&, m0 = m_m0, omg0 = m_omg0](auto i_m, auto i, auto i_p)
     {
         return m0 * (-(Phi[i_p] + Phi[i_m]) + (2 + std::pow(omg0, 2)) * Phi[i]);
     };
