@@ -1,5 +1,7 @@
 #pragma once
 #include "cppshrhelp.hpp"
+#include "system.hpp"
+#include <memory>
 #include <vector>
 
 class DLL_EXPORT HMCCallback
@@ -15,6 +17,24 @@ class DLL_EXPORT LastPhiCallback : public HMCCallback
 
   public:
     const std::vector<double> &get_data() { return m_last_Phi; }
+
+    void operator()(const std::vector<double> &Phi, bool last) override;
+};
+
+class DLL_EXPORT E0Callback : public HMCCallback
+{
+  private:
+    std::shared_ptr<HMCSystem> m_sys;
+    std::vector<double> m_samples;
+
+  public:
+    E0Callback(std::shared_ptr<HMCSystem> sys, std::size_t reserve_size = 0)
+        : m_sys(sys)
+    {
+        m_samples.reserve(reserve_size);
+    }
+
+    const std::vector<double> &get_data() { return m_samples; }
 
     void operator()(const std::vector<double> &Phi, bool last) override;
 };
@@ -54,6 +74,23 @@ class DLL_EXPORT XXCallback : public HMCCallback
         {
             m_samples[i].reserve(reserve_size);
         }
+    }
+
+    void operator()(const std::vector<double> &Phi, bool last) override;
+};
+
+class DLL_EXPORT AllPhiCallback : public HMCCallback
+{
+  private:
+    std::vector<std::vector<double>> m_samples;
+
+  public:
+    const std::vector<std::vector<double>> &get_data() { return m_samples; }
+
+    explicit AllPhiCallback(int reserve_size = 0)
+        : m_samples(std::vector<std::vector<double>>())
+    {
+        m_samples.reserve(reserve_size);
     }
 
     void operator()(const std::vector<double> &Phi, bool last) override;

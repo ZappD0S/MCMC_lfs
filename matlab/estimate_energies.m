@@ -1,8 +1,8 @@
-function [E0, dE0, DeltaE, dDeltaE] = estimate_energies(qho_sampler, a, N, m, omg)
+function [E0, dE0, DeltaE, dDeltaE] = estimate_energies(sampler, a, N, m, omg)
 
-[x2_samples, xx_samples] = qho_sampler.sample(a, N, m, omg);
+[e0_samples, xx_samples] = sampler.sample(a, N, m, omg);
 
-e0_samples = m * omg ^ 2 .* x2_samples;
+% e0_samples = m * omg ^ 2 .* x2_samples;
 
 E0 = mean(e0_samples);
 

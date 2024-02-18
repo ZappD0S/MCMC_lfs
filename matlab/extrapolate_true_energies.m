@@ -1,6 +1,4 @@
-function [E0s, dE0s, DeltaEs, dDeltaEs] = extrapolate_true_energies(qho_sampler, T, Ns, m, omg)
-
-% Ns = round(linspace(N0, Nmax, steps));
+function [E0s, dE0s, DeltaEs, dDeltaEs] = extrapolate_true_energies(sampler, T, Ns, m, omg)
 
 E0s = zeros(size(Ns));
 dE0s = zeros(size(Ns));
@@ -13,7 +11,7 @@ aa = T ./ Ns;
 for i=1:length(Ns)
     N = Ns(i);
     a = aa(i);
-    [E0, dE0, DeltaE, dDeltaE] = estimate_energies(qho_sampler, a, N, m, omg);
+    [E0, dE0, DeltaE, dDeltaE] = estimate_energies(sampler, a, N, m, omg);
 
     E0s(i) = E0;
     dE0s(i) = dE0;
@@ -24,29 +22,39 @@ end
 [funcs, n_vars_arr] = generate_function_strings(6);
 
 weights = 1 ./ (dE0s .^ 2);
-weights = weights ./ sum(weights);
+% starts = 1:floor(length(Ns) / 4);
+starts = 1:15;
 
-rmse_arr = zeros(1, length(funcs));
+chi2_arr = zeros(length(starts), length(funcs));
 errorbar(aa, E0s, dE0s)
 
-for i=1:length(funcs)
-    f = funcs(i);
-    n_vars = n_vars_arr(i);
+for i=1:length(starts)
+    start = starts(i);
 
-    [~, gof] = fit(aa', E0s', f, Weights=weights, StartPoint=[zeros(1, n_vars - 1) 0.5]);
-    rmse_arr(i) = gof.rmse;
+    for j=1:length(funcs)
+        f = funcs(j);
+        n_vars = n_vars_arr(j);
+
+        fitobj = fit(aa(start:end)', E0s(start:end)', f, Weights=weights(start:end), StartPoint=[zeros(1, n_vars - 1) 0.5]);
+
+        err_sum = weights(start:end) * (E0s(start:end)' - feval(fitobj, aa(start:end))) .^ 2;
+        df = length(E0s(start:end)) - n_vars;
+        chi2_arr(i, j) = err_sum / df;
+    end
 end
 
-[min_rmse, idx_min] = min(rmse_arr)
-best_f = funcs(idx_min)
-best_f_n_vars = n_vars_arr(idx_min);
+[~, idx_best] = min(abs(chi2_arr - 1), [], "all");
+best_chi2 = chi2_arr(idx_best)
+[r, c] = ind2sub(size(chi2_arr), idx_best);
+start = starts(r)
+f = funcs(c)
+n_vars = n_vars_arr(c);
 
-function E0 = do_fit(x, y)
-    fitobj = fit(x', y', best_f, StartPoint=[zeros(1, best_f_n_vars - 1) 0.5]);
-    E0 = fitobj.a0;
-end
-% [rmse_sorted, rmse_order] = sort(rmse_arr);
-% fitobjs = fitobjs(rmse_order);
+    function E0 = do_fit(x, y)
+        fitobj = fit(x', y', f, StartPoint=[zeros(1, n_vars - 1) 0.5]);
+        E0 = fitobj.a0;
+    end
+
 [E0, dE0] = bootstrap(1000, @do_fit, aa, E0s, dE0s)
 
 end

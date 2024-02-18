@@ -10,6 +10,16 @@ void LastPhiCallback::operator()(const std::vector<double> &Phi, bool last)
     }
 }
 
+void E0Callback::operator()(const std::vector<double> &Phi, bool last)
+{
+    m_samples.push_back(m_sys->E0(Phi));
+
+    if (last)
+    {
+        m_samples.shrink_to_fit();
+    }
+}
+
 void X2Callback::operator()(const std::vector<double> &Phi, bool last)
 {
     m_x2_buffer.resize(Phi.size());
@@ -54,5 +64,15 @@ void XXCallback::operator()(const std::vector<double> &Phi, bool last)
     for (auto i = 0; i < m_max_shift; i++)
     {
         m_samples[i].shrink_to_fit();
+    }
+}
+
+void AllPhiCallback::operator()(const std::vector<double> &Phi, bool last)
+{
+    m_samples.push_back(Phi);
+
+    if (last)
+    {
+        m_samples.shrink_to_fit();
     }
 }

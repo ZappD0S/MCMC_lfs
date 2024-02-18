@@ -1,7 +1,7 @@
 #pragma once
 #include <span>
 
-#define BLOCKSIZE 128
+#define BLOCKSIZE 16
 
 double pairwise_sum(const std::span<double> x);
 
