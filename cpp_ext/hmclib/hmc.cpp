@@ -47,6 +47,7 @@ double HMC::T(const std::vector<double> &Pi)
     }
 
     return 0.5 * pairwise_sum(m_T_buffer);
+    // return 0.5 * std::reduce(m_T_buffer.begin(), m_T_buffer.end(), 0.0);
 }
 
 int HMC::run(const std::vector<double> &Phi0,

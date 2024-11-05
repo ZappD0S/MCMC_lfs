@@ -1,11 +1,14 @@
 function res = MYautocorr_fft(dd,tt)
 
-res = fft(dd-mean(dd));
-res = ifft(res.*conj(res));
-res = res/res(1);
+% [Nsamples, N]
 
-if nargin==2
-    res = res(1:(tt+1));
-end
+fft_size = 2^ceil(log2(tt));
+res = fft(dd - mean(dd, 1), fft_size, 1);
+res = ifft(res .* conj(res), fft_size, 1);
+res = res(1:tt, :) ./ res(1, :);
+
+% if nargin == 2
+%     res = res(:, 1:(tt + 1));
+% end
 
 end

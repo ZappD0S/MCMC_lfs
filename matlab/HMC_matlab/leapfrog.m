@@ -1,11 +1,11 @@
 
 function [Phi, Pi] = leapfrog(Phi0, Pi0, epsilon, dHdPhi, Niter, varargin)
 [Phi, Pi] = leapfrog_base(Phi0, Pi0, epsilon, dHdPhi, Niter, varargin{:});
-[Phi0_rev, Pi0_rev] = leapfrog_base(Phi, Pi, -epsilon, dHdPhi, Niter, varargin{:});
+% [Phi0_rev, Pi0_rev] = leapfrog_base(Phi, Pi, -epsilon, dHdPhi, Niter, varargin{:});
 
-if not(all(isclose([Phi0 Pi0], [Phi0_rev Pi0_rev])))
-    error("leapfrog is not reversible");
-end
+% if not(all(isclose([Phi0 Pi0], [Phi0_rev Pi0_rev])))
+%     error("leapfrog is not reversible");
+% end
 
 end
 

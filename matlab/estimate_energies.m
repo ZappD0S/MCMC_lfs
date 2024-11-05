@@ -1,47 +1,27 @@
-function [E0, dE0, DeltaE, dDeltaE] = estimate_energies(sampler, a, N, m, omg)
+function [E0s, dE0s, DeltaEs, dDeltaEs, DeltaEs_creutz, dDeltaEs_creutz] = estimate_energies(sampler, aa, Ns, base_path)
 
-[e0_samples, xx_samples] = sampler.sample(a, N, m, omg);
+E0s = zeros(size(Ns));
+dE0s = zeros(size(Ns));
 
-% e0_samples = m * omg ^ 2 .* x2_samples;
+DeltaEs = zeros(size(Ns));
+dDeltaEs = zeros(size(Ns));
 
-E0 = mean(e0_samples);
+DeltaEs_creutz = zeros(size(Ns));
+dDeltaEs_creutz = zeros(size(Ns));
 
-e0_autocorr = MYautocorr_fft(e0_samples, floor(length(e0_samples) / 2));
+for i=1:length(Ns)
+    N = Ns(i);
+    a = aa(i);
+    [E0, dE0, DeltaE, dDeltaE, DeltaE_creutz, dDeltaE_creutz] = estimate_e0_deltae(sampler, a, N, base_path);
 
-idx = find(e0_autocorr < 0, 1);
-tau_int = sum(e0_autocorr(1:(idx - 1))) - 0.5;
+    E0s(i) = E0;
+    dE0s(i) = dE0;
 
-dE0 = std(e0_samples) / sqrt(length(e0_samples) / (2 * tau_int));
+    DeltaEs(i) = DeltaE;
+    dDeltaEs(i) = dDeltaE;
 
-% xx_samples size: (Niter, max_shift)
-
-[Niter, max_shift] = size(xx_samples);
-
-x = (1:max_shift) .* a;
-y = mean(xx_samples);
-
-dy = zeros(1, max_shift);
-
-for i=1:max_shift
-    xx_autocorr = MYautocorr_fft(xx_samples(:, i), floor(Niter / 2));
-    idx = find(xx_autocorr < 0, 1);
-    tau_int = sum(xx_autocorr(1:(idx - 1))) - 0.5;
-    dy(i) = std(xx_samples(:, i)) / sqrt(Niter / (2 * tau_int));
+    DeltaEs_creutz(i) = DeltaE_creutz;
+    dDeltaEs_creutz(i) = dDeltaE_creutz;
 end
-
-
-    function dE = do_fit(x, y)
-        fitobj = fit(x', y', @(C, dE, x) C * exp(-dE * x), StartPoint=[0.5, 1]);
-        dE = fitobj.dE;
-    end
-
-% errorbar(x, y, dy)
-
-[DeltaE, dDeltaE] = bootstrap(1000, @do_fit, x, y, dy);
-
-% res = bootstrp(1000, @do_fit, x', y', (1:max_shift)');
-% res = bootstrp(1000, @do_fit, x', y');
-
-% bootci(1000, @do_fit, x', y', (1:max_shift)')
 
 end

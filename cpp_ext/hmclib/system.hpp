@@ -42,11 +42,12 @@ class DLL_EXPORT QaoSystem : public HMCSystem
     double m_m0;
     double m_omg0;
     double m_lambda0;
+    double m_x0;
     std::vector<double> m_S_buffer;
     std::vector<double> m_E0_buffer;
 
   public:
-    QaoSystem(int N, double m0, double omg0, double lambda0);
+    QaoSystem(int N, double m0, double omg0, double lambda0, double x0);
 
     int size() const override { return m_N; }
 

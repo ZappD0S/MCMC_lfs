@@ -1,3 +1,4 @@
+#include "callback.hpp"
 #include "hmc.hpp"
 #include "mex.hpp"
 #include "mexAdapter.hpp"
@@ -62,7 +63,8 @@ class MexFunction : public matlab::mex::Function
         else if (sys_type == "qao")
         {
             double lambda0 = inputs[4][0];
-            sys = std::make_unique<QaoSystem>(N, m0, omg0, lambda0);
+            double x0 = inputs[5][0];
+            sys = std::make_unique<QaoSystem>(N, m0, omg0, lambda0, x0);
         }
         else
         {
@@ -89,12 +91,17 @@ class MexFunction : public matlab::mex::Function
         }
 
         Phi0 = lastPhi_callback->get_data();
-
         callbacks.clear();
+
         auto e0_callback = std::make_shared<E0Callback>(sys, N_sample);
         auto xx_callback = std::make_shared<XXCallback>(max_shift, N_sample);
+        auto all_phi_callback = std::make_shared<AllPhiCallback>(N_sample);
+        // auto concorr_callback = std::make_shared<ConnectedCorrCallback>(N, max_shift);
+
         callbacks.push_back(e0_callback);
         callbacks.push_back(xx_callback);
+        callbacks.push_back(all_phi_callback);
+        // callbacks.push_back(concorr_callback);
 
         if (hmc.run(Phi0, N_sample, callbacks) != 0)
         {
@@ -106,14 +113,17 @@ class MexFunction : public matlab::mex::Function
 
         const auto &e0_samples = e0_callback->get_data();
         const auto &xx_samples = xx_callback->get_data();
+        const auto &phis = all_phi_callback->get_data();
+        // const auto &concorr = concorr_callback->get_data();
 
         auto e0_matlab = factory.createArray(
-            {1, e0_samples.size()},
-            e0_samples.begin(),
-            e0_samples.end());
-
+            {1, e0_samples.size()}, e0_samples.begin(), e0_samples.end());
         auto xx_matlab = factory.createArray<double>(
             {xx_samples[0].size(), xx_samples.size()});
+
+        auto phis_matlab = factory.createArray<double>(
+            {phis[0].size(), phis.size()});
+        // auto concorr_matlab = factory.createArray<double>({concorr[0].size(), concorr.size()});
 
         auto xx_matlab_it = xx_matlab.begin();
         for (auto column = xx_samples.begin(); column != xx_samples.end(); column++)
@@ -121,8 +131,22 @@ class MexFunction : public matlab::mex::Function
             xx_matlab_it = std::copy(column->begin(), column->end(), xx_matlab_it);
         }
 
+        auto phis_matlab_it = phis_matlab.begin();
+        for (auto column = phis.begin(); column != phis.end(); column++)
+        {
+            phis_matlab_it = std::copy(column->begin(), column->end(), phis_matlab_it);
+        }
+
+        // auto concorr_matlab_it = concorr_matlab.begin();
+        // for (auto column = concorr.begin(); column != concorr.end(); column++)
+        // {
+        //     concorr_matlab_it = std::copy(column->begin(), column->end(), concorr_matlab_it);
+        // }
+
         outputs[0] = obj;
         outputs[1] = std::move(e0_matlab);
         outputs[2] = std::move(xx_matlab);
+        outputs[3] = std::move(phis_matlab);
+        // outputs[3] = std::move(concorr_matlab);
     }
 };

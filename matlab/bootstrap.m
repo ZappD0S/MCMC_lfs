@@ -10,4 +10,6 @@ end
 mu = mean(samples);
 sigma = std(samples);
 
+% TODO: bootstrap plot?
+
 end

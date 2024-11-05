@@ -1,61 +1,51 @@
-function [E0s, dE0s, DeltaEs, dDeltaEs] = extrapolate_true_energies(sampler, T, Ns, m, omg)
+function [E0, dE0, DeltaE, dDeltaE] = extrapolate_true_energies(E0s, dE0s, DeltaEs, dDeltaEs, T, aa, base_path)
 
-E0s = zeros(size(Ns));
-dE0s = zeros(size(Ns));
+[E0_fitobj, E0_start, E0_chi2] = find_best_fit_func(aa, E0s, dE0s, 0.5)
 
-DeltaEs = zeros(size(Ns));
-dDeltaEs = zeros(size(Ns));
+[E0, dE0] = bootstrap(1000, @(x, y) fit(x', y', E0_fitobj).a0, ...
+    aa(E0_start:end), E0s(E0_start:end), dE0s(E0_start:end))
 
-aa = T ./ Ns;
+x = linspace(0, max(aa), 100);
 
-for i=1:length(Ns)
-    N = Ns(i);
-    a = aa(i);
-    [E0, dE0, DeltaE, dDeltaE] = estimate_energies(sampler, a, N, m, omg);
+clf("reset")
 
-    E0s(i) = E0;
-    dE0s(i) = dE0;
-    DeltaEs(i) = DeltaE;
-    dDeltaEs(i) = dDeltaE;
-end
+hold on;
+errorbar(aa, E0s, dE0s, LineStyle="none")
+plot(x, feval(E0_fitobj, x), "k", DisplayName=formula(E0_fitobj))
+errorbar(0, E0, dE0, "r*", LineStyle="none", DisplayName=sprintf("E_0 = %f \\pm %f", E0, dE0))
+hold off;
 
-[funcs, n_vars_arr] = generate_function_strings(6);
+xlabel("$a$", Interpreter="latex")
+ylabel("$E_0$", Interpreter="latex")
+title(sprintf("Miglior $\\chi^2 = %.3f$ ($T = %.1f$, $a = %.1f \\dots %.1f$)", E0_chi2, T, aa(1), aa(end)), Interpreter="latex")
+legend()
 
-weights = 1 ./ (dE0s .^ 2);
-% starts = 1:floor(length(Ns) / 4);
-starts = 1:15;
+axis tight
+axis padded
 
-chi2_arr = zeros(length(starts), length(funcs));
-errorbar(aa, E0s, dE0s)
+saveas(gcf, fullfile(base_path, "extrap_E0_fit.pdf"))
 
-for i=1:length(starts)
-    start = starts(i);
+[DeltaE_fitobj, DeltaE_start, DeltaE_chi2] = find_best_fit_func(aa, DeltaEs, dDeltaEs, 1.0)
 
-    for j=1:length(funcs)
-        f = funcs(j);
-        n_vars = n_vars_arr(j);
+[DeltaE, dDeltaE] = bootstrap(1000, @(x, y) fit(x', y', DeltaE_fitobj).a0, ...
+    aa(DeltaE_start:end), DeltaEs(DeltaE_start:end), dDeltaEs(DeltaE_start:end))
 
-        fitobj = fit(aa(start:end)', E0s(start:end)', f, Weights=weights(start:end), StartPoint=[zeros(1, n_vars - 1) 0.5]);
+clf("reset")
 
-        err_sum = weights(start:end) * (E0s(start:end)' - feval(fitobj, aa(start:end))) .^ 2;
-        df = length(E0s(start:end)) - n_vars;
-        chi2_arr(i, j) = err_sum / df;
-    end
-end
+hold on;
+errorbar(aa, DeltaEs, dDeltaEs, LineStyle="none")
+plot(x, feval(DeltaE_fitobj, x), "k", DisplayName=formula(DeltaE_fitobj))
+errorbar(0, DeltaE, dDeltaE, "r*", LineStyle="none", DisplayName=sprintf("\\Delta E = %f \\pm %f", DeltaE, dDeltaE))
+hold off;
 
-[~, idx_best] = min(abs(chi2_arr - 1), [], "all");
-best_chi2 = chi2_arr(idx_best)
-[r, c] = ind2sub(size(chi2_arr), idx_best);
-start = starts(r)
-f = funcs(c)
-n_vars = n_vars_arr(c);
+xlabel("$a$", Interpreter="latex")
+ylabel("$\Delta E$", Interpreter="latex")
+title(sprintf("Miglior $\\chi^2 = %.3f$ ($T = %.1f$, $a = %.1f \\dots %.1f$)", DeltaE_chi2, T, aa(1), aa(end)), Interpreter="latex")
+legend()
 
-    function E0 = do_fit(x, y)
-        fitobj = fit(x', y', f, StartPoint=[zeros(1, n_vars - 1) 0.5]);
-        E0 = fitobj.a0;
-    end
+axis tight
+axis padded
 
-[E0, dE0] = bootstrap(1000, @do_fit, aa, E0s, dE0s)
+saveas(gcf, fullfile(base_path, "extrap_DeltaE_fit.pdf"))
 
 end
-

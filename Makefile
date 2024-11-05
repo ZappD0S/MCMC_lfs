@@ -1,6 +1,6 @@
 # adapted from https://makefiletutorial.com/#makefile-cookbook
 
-CXX = g++
+CXX = g++-10
 
 # -D_GLIBCXX_DEBUG
 
@@ -12,6 +12,9 @@ CXXFLAGS = -O3 -ffast-math -fvisibility=hidden -march=native -std=c++20 \
 
 BUILD_DIR := ./build
 SRC_DIR := ./cpp_ext
+
+# MATLAB_BASE_DIR := /c/Program Files/MATLAB/R2023b
+MATLAB_BASE_DIR := /usr/local/MATLAB/R2024a
 
 # Every folder in ./src will need to be passed to GCC so that it can find header files
 INC_DIRS := $(shell find $(SRC_DIR) -type d)
@@ -30,15 +33,18 @@ HMCLIB_OBJS := $(HMCLIB_SRCS:$(SRC_DIR)/%=$(BUILD_DIR)/%.o)
 # As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
 HMCLIB_DEPS := $(HMCLIB_OBJS:.o=.d)
 
-$(BUILD_DIR)/libhmclib.dll: $(HMCLIB_OBJS)
+# $(BUILD_DIR)/libhmclib.dll: $(HMCLIB_OBJS)
+$(BUILD_DIR)/libhmclib.so: $(HMCLIB_OBJS)
 	mkdir -p $(dir $@)
-	$(CXX) $(HMCLIB_OBJS) -o $@ -shared -fPIC -flto -Wl,--out-implib,$(@:.dll=.lib)
+	$(CXX) $(HMCLIB_OBJS) -o $@ -shared -fPIC -flto -Wl,--out-implib,$(@:.so=.lib)
+
 $(HMCLIB_OBJS) : $(BUILD_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(INC_FLAGS) $(CXXFLAGS) -fPIC -flto -c $< -o $@
 
 .PHONY: hmclib
-hmclib: $(BUILD_DIR)/libhmclib.dll
+# hmclib: $(BUILD_DIR)/libhmclib.dll
+hmclib: $(BUILD_DIR)/libhmclib.so
 
 
 MEX_SRCS := $(shell find $(SRC_DIR)/mex_funcs -maxdepth 1 -name '*.cpp')
@@ -46,18 +52,28 @@ MEX_SRCS := $(shell find $(SRC_DIR)/mex_funcs -maxdepth 1 -name '*.cpp')
 MEX_OBJS := $(MEX_SRCS:$(SRC_DIR)/%=$(BUILD_DIR)/%.o)
 MEX_DEPS := $(MEX_OBJS:.o=.d)
 
-MEX_LIBS := $(MEX_OBJS:.cpp.o=.mexw64)
+# see: https://it.mathworks.com/help/matlab/matlab_external/build-c-mex-programs.html
+# Windows: .mexw64
+# Linux: .mexa64
 
-$(MEX_LIBS) : %.mexw64: %.cpp.o hmclib
+MEX_LIBS := $(MEX_OBJS:.cpp.o=.mexa64)
+
+$(MEX_LIBS) : %.mexa64: %.cpp.o hmclib
 	mkdir -p $(dir $@)
 	$(CXX) $< -o $@ -shared -fPIC -flto \
-		-L"/c/Program Files/MATLAB/R2023b/extern/lib/win64/mingw64" -L$(BUILD_DIR) -Wl,-rpath $(BUILD_DIR) \
-		 -lhmclib -lmex -lMatlabEngine -lMatlabDataArray
+		-L$(BUILD_DIR) \
+		-Wl,-rpath=$(realpath $(BUILD_DIR)) \
+		-L$(MATLAB_BASE_DIR)/bin/glnxa64 \
+		-L$(MATLAB_BASE_DIR)/extern/bin/glnxa64 \
+		-lhmclib -lmex -lMatlabEngine -lMatlabDataArray \
+		-Wl,-rpath=$(MATLAB_BASE_DIR)/extern/bin/glnxa64
+
+# -L "$MATLAB_BASE_DIR/extern/lib/win64/mingw64"
 
 
 $(MEX_OBJS) : $(BUILD_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(INC_FLAGS) -isystem "/c/Program Files/MATLAB/R2023b/extern/include" \
+	$(CXX) $(INC_FLAGS) -isystem $(MATLAB_BASE_DIR)/extern/include \
 		$(CXXFLAGS) -fPIC -flto \
 		-c $< -o $@
 

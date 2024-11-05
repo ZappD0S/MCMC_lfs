@@ -67,12 +67,44 @@ class DLL_EXPORT XXCallback : public HMCCallback
     const std::vector<std::vector<double>> &get_data() { return m_samples; }
 
     explicit XXCallback(int max_shift, int reserve_size = 0)
-        : m_samples(std::vector<std::vector<double>>(max_shift)),
+        : m_samples(std::vector<std::vector<double>>(max_shift + 1)),
           m_max_shift(max_shift)
     {
-        for (auto i = 0; i < max_shift; i++)
+        for (auto i = 0; i <= max_shift; i++)
         {
             m_samples[i].reserve(reserve_size);
+        }
+    }
+
+    void operator()(const std::vector<double> &Phi, bool last) override;
+};
+
+class DLL_EXPORT ConnectedCorrCallback : public HMCCallback
+{
+  private:
+    std::vector<double> m_x;
+    std::vector<std::vector<double>> m_xx;
+    std::vector<std::vector<double>> m_concorr;
+    int m_N;
+    int m_max_shift;
+    int m_count;
+
+  public:
+    const std::vector<std::vector<double>> &get_data();
+
+    explicit ConnectedCorrCallback(int N, int max_shift)
+        : m_x(std::vector<double>(N)),
+          m_xx(std::vector<std::vector<double>>(N)),
+          m_concorr(std::vector<std::vector<double>>(N)),
+          m_N(N),
+          m_max_shift(max_shift),
+          m_count(0)
+    {
+        for (auto i = 0; i < N; i++)
+        {
+
+            m_concorr[i] = std::vector<double>(max_shift, 0.0);
+            m_xx[i] = std::vector<double>(max_shift, 0.0);
         }
     }
 
